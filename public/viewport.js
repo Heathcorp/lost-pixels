@@ -84,8 +84,7 @@ class Chunk {
 }
 
 class Viewport {
-    constructor(center) {
-        // stub, add camera system and stuff
+    constructor(center, zoom) {
         this.a = {x: -64n, y: -48n};
         this.b = {x: 64n, y: 48n};
 
@@ -99,7 +98,7 @@ class Viewport {
         let buffer = Buffer.from(image, 'base64');
         let sprite = PIXI.Sprite.from(
             PIXI.Texture.fromBuffer(buffer, 16, 16, {
-                format:PIXI.FORMATS.RGB, 
+                format:PIXI.FORMATS.RGB,
                 mipmap:PIXI.MIPMAP_MODES.OFF
             })
         );
@@ -129,5 +128,13 @@ class Viewport {
                 break;
             }
         }
+    }
+
+    MoveViewport(center) {
+
+    }
+
+    ChangeScale(scale) {
+
     }
 }
