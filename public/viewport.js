@@ -5,17 +5,7 @@ const socket = new WebSocket('ws://127.0.0.1');
 
 socket.onopen = (event) => {
     console.log("Connected");
-    viewport = new Viewport({x: 0n, y: 0n});
-
-    socket.send(JSONb.stringify({
-        event: "setviewport",
-        data: {
-            viewport: {
-                a: viewport.a,
-                b: viewport.b
-            }
-        }
-    }));
+    const viewport = new Viewport(socket, {x: 0n, y: 0n});
 
     // socket.send(JSONb.stringify({
     //     event: "setpixel", 
@@ -35,7 +25,6 @@ socket.onopen = (event) => {
     socket.onmessage = (msg) => {
         msg = JSONb.parse(msg.data);
         data = msg.data;
-        console.log(msg);
     
         switch(msg.event) {
             case "loadchunk":
@@ -73,18 +62,32 @@ window.onresize = () => {
 
 
 class Chunk {
-    constructor(x, y, sprite) {
+    constructor(x, y, sprite, viewport) {
         this.x = BigInt(x);
         this.y = BigInt(y);
         this.sprite = sprite;
 
-        this.sprite.x = Number(BigInt(this.x) * 16n);
-        this.sprite.y = Number(BigInt(this.y) * 16n);
+        this.worldPos = {
+            x: this.x * 16n,
+            y: this.y * 16n
+        }
+
+        this.UpdateSpritePos(viewport);
+    }
+
+    UpdateSpritePos(viewport) {
+        let pixelPos = viewport.WorldToPixel(this.worldPos);
+
+        this.sprite.x = pixelPos.x;
+        this.sprite.y = pixelPos.y;
+        this.sprite.scale.set(viewport.zoom);
     }
 }
 
 class Viewport {
-    constructor(center, zoom = 16) {
+    constructor(socket, center, zoom = 16) {
+        this.socket = socket;
+
         this.viewport = {a: {x: 0n, y: 0n}, b: {x: 0n, y: 0n}};
 
         this.center = {
@@ -93,14 +96,46 @@ class Viewport {
         };
         this.zoom = Number(zoom);
 
-        this.SetViewport();
-
         this.chunks = new Set();
 
-        this.displayContainer = new PIXI.Container()
-            .interactive = true;
+        this.SetViewport();
+
+        this.displayContainer = new PIXI.Container();
+        this.displayContainer.interactive = true;
+        this.displayContainer.hitArea = new PIXI.Rectangle(0, 0, window.innerWidth, window.innerHeight);
 
         app.stage.addChild(this.displayContainer);
+
+        app.renderer.on('resize', (screenWidth, screenHeight) => {
+            this.SetViewport();
+        });
+
+        app.view.addEventListener('wheel', (e) => {
+            this.zoom -= e.deltaY / 1000;
+            this.SetViewport();
+        });
+
+        this.displayContainer.on('mousedown', (e) => {
+            this.socket.send(JSONb.stringify({
+                event: "setpixel", 
+                data: {
+                    position: this.PixelToWorld({x: e.data.global.x, y: e.data.global.y}), 
+                    colour: {
+                        r: 0, 
+                        g: 0, 
+                        b: 0
+                    }
+                }
+            }));
+        });
+
+        this.displayContainer.on('mousemove', (e) => {
+            
+        });
+
+        this.displayContainer.on('mouseup', (e) => {
+            
+        });
     }
 
     DisplayChunk(chunk, image) {
@@ -119,7 +154,7 @@ class Viewport {
             y: BigInt(chunk.y)
         };
     
-        let newChunk = new Chunk(ch.x, ch.y, sprite);
+        let newChunk = new Chunk(ch.x, ch.y, sprite, this);
         this.displayContainer.addChild(newChunk.sprite);
         this.chunks.add(newChunk);
     }
@@ -132,7 +167,7 @@ class Viewport {
         
         for (let c of this.chunks) {
             if (c.x == ch.x && c.y == ch.y) {
-                c.sprite.destoy();
+                c.sprite.destroy();
                 this.chunks.delete(c);
                 break;
             }
@@ -149,30 +184,41 @@ class Viewport {
     }
 
     SetViewport() {
-        let width = Math.round(window.innerWidth / this.zoom);
-        let height = Math.round(window.innerHeight / this.zoom);
+        let width = window.innerWidth / this.zoom;
+        let height = window.innerHeight / this.zoom;
         
-        let w = BigInt(width / 2);
-        let h = BigInt(height / 2);
+        let w = BigInt(Math.round(width / 2));
+        let h = BigInt(Math.round(height / 2));
 
         this.viewport.a.x = this.center.x - w;
         this.viewport.b.x = this.center.x + w;
         this.viewport.a.y = this.center.y - h;
         this.viewport.b.y = this.center.y + h;
+
+        socket.send(JSONb.stringify({
+            event: "setviewport",
+            data: {
+                viewport: this.viewport
+            }
+        }));
+
+        for (let chunk of this.chunks) {
+            chunk.UpdateSpritePos(this);
+        }
     }
 
     PixelToWorld(pixelPos) {
-        position = {
-            x: this.viewport.a.x + BigInt(Number(pixelPos.x) / this.zoom),
-            y: this.viewport.a.y + BigInt(Number(pixelPos.y) / this.zoom)
+        let position = {
+            x: this.viewport.a.x + BigInt(Math.floor(Number(pixelPos.x) / this.zoom)),
+            y: this.viewport.a.y + BigInt(Math.floor(Number(pixelPos.y) / this.zoom))
         };
         return position;
     }
 
     WorldToPixel(position) {
-        pixelPos = {
+        let pixelPos = {
             x: Math.round(Number(BigInt(position.x) - this.viewport.a.x) * this.zoom),
-            y: Math.round(Number(BigInt(position.y) - this.viewport.a.x) * this.zoom)
+            y: Math.round(Number(BigInt(position.y) - this.viewport.a.y) * this.zoom)
         };
         return pixelPos;
     }

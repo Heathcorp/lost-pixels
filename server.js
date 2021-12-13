@@ -72,14 +72,28 @@ class Chunk {
     // sends chunk to any connected sessions within view
     UpdateSessions() {
         for (let session of sessions) {
-            let min = {x: session.viewport.a.x / 16n, y: session.viewport.a.y / 16n};
-            let max = {x: session.viewport.b.x / 16n, y: session.viewport.b.y / 16n};
+            let min = WorldToChunk(session.viewport.a);
+            let max = WorldToChunk(session.viewport.b);
 
             if (this.x >= min.x && this.y >= min.y && this.x <= max.x && this.y <= max.y) {
                 session.SendChunk(this);
             }
         }
     }
+}
+
+function WorldToChunk(position) {
+    position = {
+        x: BigInt(position.x),
+        y: BigInt(position.y)
+    }
+
+    let cx = position.x / 16n;
+    let cy = position.y / 16n;
+    if (position.x < 0n) { cx -= 1n }
+    if (position.y < 0n) { cy -= 1n }
+
+    return {x: cx, y: cy};
 }
 
 // sets a pixel given by its position and colour
@@ -89,7 +103,8 @@ function SetPixel(position, colour) {
         y: BigInt(position.y)
     }
 
-    let chunk = new Chunk(BigInt(position.x) / 16n, BigInt(position.y) / 16n);
+    let cpos = WorldToChunk(position);
+    let chunk = new Chunk(cpos.x, cpos.y);
 
     console.log("Setting pixel (%d, %d) in chunk (%d, %d) to (%d, %d, %d).", position.x, position.y, chunk.x, chunk.y, colour.r, colour.g, colour.b);
 
@@ -134,6 +149,8 @@ class Session {
         this.viewport = {a: {x: 0n, y: 0n}, b: {x: 0n, y: 0n}};
 
         this.socket = socket;
+
+        this.activeChunks = new Set();
     }
 
     // ChangeViewport but for first connection, probably needs a rethink
@@ -151,20 +168,19 @@ class Session {
     // change the user's viewport and load/unload/reload any chunks as needed
     ChangeViewport(viewport) {
         // get the old chunk viewport to compare with new one
-        let oldmin = {x: this.viewport.a.x / 16n, y: this.viewport.a.y / 16n};
-        let oldmax = {x: this.viewport.b.x / 16n, y: this.viewport.b.y / 16n};
+        let oldmin = WorldToChunk(this.viewport.a);
+        let oldmax = WorldToChunk(this.viewport.b);
         
         this.viewport.a.x = BigInt(viewport.a.x);
         this.viewport.a.y = BigInt(viewport.a.y);
-
         this.viewport.b.x = BigInt(viewport.b.x);
         this.viewport.b.y = BigInt(viewport.b.y);
 
         console.log("Set a user's viewport to: (%d, %d) -> (%d, %d)", this.viewport.a.x, this.viewport.a.y, this.viewport.b.x, this.viewport.b.y);
 
         // get the new chunk viewport
-        let min = {x: this.viewport.a.x / 16n, y: this.viewport.a.y / 16n};
-        let max = {x: this.viewport.b.x / 16n, y: this.viewport.b.y / 16n};
+        let min = WorldToChunk(this.viewport.a);
+        let max = WorldToChunk(this.viewport.b);
 
         // iterate over chunk coordinates within new viewport
         // loads new chunks and unloads old ones, depending on which viewports they're within
@@ -180,7 +196,9 @@ class Session {
             for (let y = min.y; y <= max.y; y++) {
                 if (x < oldmin.x || y < oldmin.y || x > oldmax.x || y > oldmax.y) {
                     let chunk = new Chunk(x, y);
-                    this.SendChunk(chunk);
+                    if (!this.activeChunks.has(chunk.hash)) {
+                        this.SendChunk(chunk);
+                    }
                 }
             }
         }
@@ -193,6 +211,8 @@ class Session {
 
         // if chunk doesn't exist, ignore
         if (exists) {
+            this.activeChunks.add(chunk.hash);
+
             let buffer = fs.readFileSync(filePath);
 
             let msg = JSONb.stringify({
@@ -211,15 +231,17 @@ class Session {
 
     // send a message informing the user session that a chunk is no longer loaded
     UnloadChunk(chunk) {
-        let msg = JSONb.stringify({
-            event: "unloadchunk",
-            data: {
-                chunk: {
-                    x: chunk.x,
-                    y: chunk.y
+        if (this.activeChunks.delete(chunk.hash)) {
+            let msg = JSONb.stringify({
+                event: "unloadchunk",
+                data: {
+                    chunk: {
+                        x: chunk.x,
+                        y: chunk.y
+                    }
                 }
-            }
-        });
-        this.socket.send(msg);
+            });
+            this.socket.send(msg);
+        }
     }
 }
