@@ -99,7 +99,7 @@ function SetPixel(position, colour) {
 
     // checks if the chunk has been written to file already
     // if so, buffer = the file contents
-    // else, buffer = blank white square
+    // else, buffer = blank white 16*16 square
     if (exists) {
         buffer = fs.readFileSync(filePath);
     } else {

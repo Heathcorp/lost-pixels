@@ -84,13 +84,22 @@ class Chunk {
 }
 
 class Viewport {
-    constructor(center, zoom) {
-        this.a = {x: -64n, y: -48n};
-        this.b = {x: 64n, y: 48n};
+    constructor(center, zoom = 16) {
+        this.viewport = {a: {x: 0n, y: 0n}, b: {x: 0n, y: 0n}};
+
+        this.center = {
+            x: BigInt(center.x),
+            y: BigInt(center.y)
+        };
+        this.zoom = Number(zoom);
+
+        this.SetViewport();
 
         this.chunks = new Set();
 
-        this.displayContainer = new PIXI.Container();
+        this.displayContainer = new PIXI.Container()
+            .interactive = true;
+
         app.stage.addChild(this.displayContainer);
     }
 
@@ -130,11 +139,41 @@ class Viewport {
         }
     }
 
-    MoveViewport(center) {
-
+    SetPosition(center, zoom = this.zoom) {
+        this.center = {
+            x: BigInt(center.x),
+            y: BigInt(center.y)
+        };
+        this.zoom = zoom;
+        this.SetViewport();
     }
 
-    ChangeScale(scale) {
+    SetViewport() {
+        let width = Math.round(window.innerWidth / this.zoom);
+        let height = Math.round(window.innerHeight / this.zoom);
+        
+        let w = BigInt(width / 2);
+        let h = BigInt(height / 2);
 
+        this.viewport.a.x = this.center.x - w;
+        this.viewport.b.x = this.center.x + w;
+        this.viewport.a.y = this.center.y - h;
+        this.viewport.b.y = this.center.y + h;
+    }
+
+    PixelToWorld(pixelPos) {
+        position = {
+            x: this.viewport.a.x + BigInt(Number(pixelPos.x) / this.zoom),
+            y: this.viewport.a.y + BigInt(Number(pixelPos.y) / this.zoom)
+        };
+        return position;
+    }
+
+    WorldToPixel(position) {
+        pixelPos = {
+            x: Math.round(Number(BigInt(position.x) - this.viewport.a.x) * this.zoom),
+            y: Math.round(Number(BigInt(position.y) - this.viewport.a.x) * this.zoom)
+        };
+        return pixelPos;
     }
 }
