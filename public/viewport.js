@@ -114,6 +114,7 @@ class Viewport {
 
         // update the viewport when the canvas is resized
         app.renderer.on('resize', (screenWidth, screenHeight) => {
+            this.displayContainer.hitArea = new PIXI.Rectangle(0, 0, screenWidth, screenHeight);
             this.SetViewport();
             this.UpdateViewport();
         });
