@@ -1,26 +1,11 @@
 const JSONb = require('json-bigint')({useNativeBigInt: true});
 const { Buffer } = require('buffer');
 
-const socket = new WebSocket('ws://127.0.0.1');
+const socket = new WebSocket('ws://192.168.0.55');
 
 socket.onopen = (event) => {
     console.log("Connected");
     const viewport = new Viewport(socket, {x: 0n, y: 0n});
-
-    // socket.send(JSONb.stringify({
-    //     event: "setpixel", 
-    //     data: {
-    //         position: {
-    //             x: 0n, 
-    //             y: 0n
-    //         }, 
-    //         colour: {
-    //             r: 255, 
-    //             g: 127, 
-    //             b: 0
-    //         }
-    //     }
-    // }));
 
     socket.onmessage = (msg) => {
         msg = JSONb.parse(msg.data);
@@ -47,7 +32,7 @@ socket.onopen = (event) => {
 
 
 const app = new PIXI.Application({
-    backgroundColor: 0xffffff,
+    backgroundColor: 0xdddddd,
     width: window.innerWidth,
     height: window.innerHeight
 });
@@ -111,30 +96,58 @@ class Viewport {
         });
 
         app.view.addEventListener('wheel', (e) => {
-            this.zoom -= e.deltaY / 1000;
+            this.zoom -= e.deltaY / 100;
             this.SetViewport();
         });
 
+        this.mouseLeftDown = false;
         this.displayContainer.on('mousedown', (e) => {
+            this.mouseLeftDown = true;
             this.socket.send(JSONb.stringify({
                 event: "setpixel", 
                 data: {
                     position: this.PixelToWorld({x: e.data.global.x, y: e.data.global.y}), 
                     colour: {
-                        r: 0, 
-                        g: 0, 
-                        b: 0
+                        r: Math.floor(Math.random() * 256), 
+                        g: Math.floor(Math.random() * 256), 
+                        b: Math.floor(Math.random() * 256)
                     }
                 }
             }));
         });
 
+        this.worldPixelsToDraw = [];
         this.displayContainer.on('mousemove', (e) => {
-            
+            if (this.mouseLeftDown) {
+                let last = this.worldPixelsToDraw.at(-1);
+                let n = this.PixelToWorld({x: e.data.global.x, y: e.data.global.y});
+                if (!last || n.x != last.x || n.y != last.y) {
+                    this.worldPixelsToDraw.push(n);
+                }
+            }
         });
 
         this.displayContainer.on('mouseup', (e) => {
-            
+            this.mouseLeftDown = false;
+            if (this.worldPixelsToDraw.length) {
+                this.socket.send(JSONb.stringify({
+                    event: "setpixels", 
+                    data: {
+                        // need to redo the client-server comms here, it's too network intensive
+                        array: this.worldPixelsToDraw.map((pos) => {
+                            return {
+                                position: pos,
+                                colour: {
+                                    r: Math.floor(Math.random() * 256), 
+                                    g: Math.floor(Math.random() * 256), 
+                                    b: Math.floor(Math.random() * 256)
+                                }
+                            };
+                        })
+                    }
+                }));
+                this.worldPixelsToDraw = [];
+            }
         });
     }
 
@@ -217,8 +230,8 @@ class Viewport {
 
     WorldToPixel(position) {
         let pixelPos = {
-            x: Math.round(Number(BigInt(position.x) - this.viewport.a.x) * this.zoom),
-            y: Math.round(Number(BigInt(position.y) - this.viewport.a.y) * this.zoom)
+            x: Number(BigInt(position.x) - this.viewport.a.x) * this.zoom,
+            y: Number(BigInt(position.y) - this.viewport.a.y) * this.zoom
         };
         return pixelPos;
     }

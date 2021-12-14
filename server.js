@@ -36,6 +36,7 @@ app.ws('/', (socket, req) => {
                 SetPixel(data.position, data.colour);
                 break;
             case "setpixels":
+                SetPixels(data.array);
                 break;
             case "setviewport":
                 session.SetViewport(data.viewport);
@@ -90,8 +91,12 @@ function WorldToChunk(position) {
 
     let cx = position.x / 16n;
     let cy = position.y / 16n;
-    if (position.x < 0n) { cx -= 1n }
-    if (position.y < 0n) { cy -= 1n }
+    if (position.x < 0n) {
+        cx = ((1n + position.x) / 16n) - 1n;
+    }
+    if (position.y < 0n) {
+        cy = ((1n + position.y) / 16n) - 1n;
+    }
 
     return {x: cx, y: cy};
 }
@@ -106,7 +111,7 @@ function SetPixel(position, colour) {
     let cpos = WorldToChunk(position);
     let chunk = new Chunk(cpos.x, cpos.y);
 
-    console.log("Setting pixel (%d, %d) in chunk (%d, %d) to (%d, %d, %d).", position.x, position.y, chunk.x, chunk.y, colour.r, colour.g, colour.b);
+    //console.log("Setting pixel (%d, %d) in chunk (%d, %d) to (%d, %d, %d).", position.x, position.y, chunk.x, chunk.y, colour.r, colour.g, colour.b);
 
     let filePath = path.join(world_path, chunk.hash)
     let exists = fs.existsSync(filePath);
@@ -141,6 +146,13 @@ function SetPixel(position, colour) {
 
     // since chunk has been edited, update all sessions so they get realtime updates
     chunk.UpdateSessions();
+}
+
+// sets an arbitrary number of pixels, needs redoing to be more efficient on both the server and client
+function SetPixels(pixelArray) {
+    for (let p of pixelArray) {
+        SetPixel(p.position, p.colour);
+    }
 }
 
 // class to keep track of connected user sessions
