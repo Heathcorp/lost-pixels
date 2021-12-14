@@ -1,2 +1,2 @@
 # blank-canvas
-A web app where users can publicly draw on a practically infinite 2D canvas.
+A full-stack web application where users can collaborate by drawing publicly on an infinite 2D canvas.
