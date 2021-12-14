@@ -32,7 +32,7 @@ socket.onopen = (event) => {
 
 
 const app = new PIXI.Application({
-    backgroundColor: 0xdddddd,
+    backgroundColor: 0xffffff,
     width: window.innerWidth,
     height: window.innerHeight
 });
