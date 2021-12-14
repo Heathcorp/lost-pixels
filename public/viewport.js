@@ -84,6 +84,12 @@ class Viewport {
         this.chunks = new Set();
 
         this.SetViewport();
+        socket.send(JSONb.stringify({
+            event: "setviewport",
+            data: {
+                viewport: this.viewport
+            }
+        }));
 
         this.displayContainer = new PIXI.Container();
         this.displayContainer.interactive = true;
@@ -93,11 +99,17 @@ class Viewport {
 
         app.renderer.on('resize', (screenWidth, screenHeight) => {
             this.SetViewport();
+            this.UpdateViewport();
         });
 
         app.view.addEventListener('wheel', (e) => {
             this.zoom -= e.deltaY / 100;
             this.SetViewport();
+            this.UpdateViewport();
+        });
+
+        app.view.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
         });
 
         this.mouseLeftDown = false;
@@ -118,7 +130,17 @@ class Viewport {
 
         this.worldPixelsToDraw = [];
         this.displayContainer.on('mousemove', (e) => {
-            if (this.mouseLeftDown) {
+            if (this.mouseRightDown) {
+                let a = this.PixelToWorld(this.mouseRightStartPos);
+                let b = this.PixelToWorld({x: e.data.global.x, y: e.data.global.y});
+
+                let delta = {x: a.x - b.x, y: a.y - b.y};
+                let newCenter = {x: this.centerMoveStartPos.x + delta.x, y: this.centerMoveStartPos.y + delta.y};
+                if (newCenter.x != this.center.x || newCenter.y != this.center.y) {
+                    this.SetPosition(newCenter);
+                }
+            }
+            else if (this.mouseLeftDown) {
                 let last = this.worldPixelsToDraw.at(-1);
                 let n = this.PixelToWorld({x: e.data.global.x, y: e.data.global.y});
                 if (!last || n.x != last.x || n.y != last.y) {
@@ -148,6 +170,21 @@ class Viewport {
                 }));
                 this.worldPixelsToDraw = [];
             }
+        });
+
+        // right-click / navigation dragging listeners:
+        this.mouseRightDown = false;
+        this.mouseRightStartPos = {x: 0, y: 0};
+        this.centerMoveStartPos = this.center;
+        this.displayContainer.on('rightdown', (e) => {
+            this.mouseRightDown = true;
+            this.centerMoveStartPos = this.center;
+            this.mouseRightStartPos = {x: e.data.global.x, y: e.data.global.y};
+        });
+
+        this.displayContainer.on('rightup', (e) => {
+            this.mouseRightDown = false;
+            this.UpdateViewport();
         });
     }
 
@@ -203,21 +240,33 @@ class Viewport {
         let w = BigInt(Math.round(width / 2));
         let h = BigInt(Math.round(height / 2));
 
-        this.viewport.a.x = this.center.x - w;
-        this.viewport.b.x = this.center.x + w;
-        this.viewport.a.y = this.center.y - h;
-        this.viewport.b.y = this.center.y + h;
-
-        socket.send(JSONb.stringify({
-            event: "setviewport",
-            data: {
-                viewport: this.viewport
+        this.viewport = {
+            a: {
+                x: this.center.x - w,
+                y: this.center.y - h
+            },
+            b: {
+                x: this.center.x + w,
+                y: this.center.y + h
             }
-        }));
+        }
 
         for (let chunk of this.chunks) {
             chunk.UpdateSpritePos(this);
         }
+
+        console.log(this.chunks.size);
+    }
+
+    // to avoid excessive sending of viewports to server
+    // so you can set the viewport without loading and unloading all the chunks
+    UpdateViewport() {
+        socket.send(JSONb.stringify({
+            event: "moveviewport",
+            data: {
+                viewport: this.viewport
+            }
+        }));
     }
 
     PixelToWorld(pixelPos) {
