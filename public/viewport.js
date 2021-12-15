@@ -77,7 +77,7 @@ class Chunk {
 
 // class to keep track of world state, graphics, user interaction, some server comms
 class Viewport {
-    constructor(socket, center, zoom = 16) {
+    constructor(socket, center, zoom = 8) {
         this.socket = socket;
 
         // world coordinates viewport, mainly useful for the server to know what we're looking at
@@ -90,6 +90,7 @@ class Viewport {
         };
         // the zoom level, objects apper this.zoom times their normal size in pixels
         this.zoom = Number(zoom);
+        this.zoomScale = 1.1; // number to multiply or divide zoom by when scrolling
 
         // set of active, rendered chunk objects
         this.chunks = new Set();
@@ -121,9 +122,23 @@ class Viewport {
 
         // handle zooming, unfinished
         app.view.addEventListener('wheel', (e) => {
-            this.zoom -= e.deltaY / 100;
-            this.SetViewport();
-            this.UpdateViewport();
+            let oldZoom = this.zoom;
+            if (e.deltaY < 0) {
+                this.zoom *= this.zoomScale;
+            }
+            else if (e.deltaY > 0) {
+                this.zoom /= this.zoomScale;
+            }
+            else {
+                return;
+            }
+            if (this.zoom < 8) {
+                this.zoom = 8;
+            }
+            if (this.zoom != oldZoom) {
+                this.SetViewport();
+                this.UpdateViewport();
+            }
         });
 
         // turn off context menu on right click
