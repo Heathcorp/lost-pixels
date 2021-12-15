@@ -132,9 +132,14 @@ class Viewport {
             else {
                 return;
             }
+
             if (this.zoom < 8) {
                 this.zoom = 8;
             }
+            else if (this.zoom > 128) {
+                this.zoom = 128;
+            }
+            
             if (this.zoom != oldZoom) {
                 this.SetViewport();
                 this.UpdateViewport();
@@ -302,8 +307,6 @@ class Viewport {
         for (let chunk of this.chunks) {
             chunk.UpdateSpritePos(this);
         }
-
-        console.log(this.chunks.size); //debug
     }
 
     // sends a message to the server saying we've moved and would like new chunks for that area if they exist
