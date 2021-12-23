@@ -34,22 +34,6 @@ socket.onopen = (event) => {
     };
 };
 
-// create PIXI.js application
-const app = new PIXI.Application({
-    backgroundColor: 0xffffff,
-    width: window.innerWidth,
-    height: window.innerHeight
-});
-
-// add PIXI.js application once page loads
-window.onload = () => {
-    document.body.appendChild(app.view);
-}
-
-window.onresize = () => {
-    app.renderer.resize(window.innerWidth, window.innerHeight);
-};
-
 // class to keep track of a chunk and its sprite
 class Chunk {
     constructor(x, y, sprite, viewport) {
@@ -88,7 +72,7 @@ class Viewport {
             x: BigInt(center.x),
             y: BigInt(center.y)
         };
-        // the zoom level, objects apper this.zoom times their normal size in pixels
+        // the zoom level, objects appear this.zoom times their normal size in pixels
         this.zoom = Number(zoom);
         this.zoomScale = 1.1; // number to multiply or divide zoom by when scrolling
 
@@ -104,6 +88,23 @@ class Viewport {
             }
         }));
 
+        // create PIXI.js application
+        this.app = new PIXI.Application({
+            backgroundColor: 0xffffff,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            view: document.getElementById('viewport-canvas')
+        });
+
+        // add PIXI.js application once page loads
+        window.onload = () => {
+            document.body.appendChild(app.view);
+        }
+
+        window.onresize = () => {
+            this.app.renderer.resize(window.innerWidth, window.innerHeight);
+        };
+
         // create PIXI.js container to hold all the chunk sprites and handle some interaction
         this.displayContainer = new PIXI.Container();
         // next 2 lines are required to get mouse events
@@ -111,17 +112,17 @@ class Viewport {
         this.displayContainer.hitArea = new PIXI.Rectangle(0, 0, window.innerWidth, window.innerHeight);
 
         // mount the container for rendering
-        app.stage.addChild(this.displayContainer);
+        this.app.stage.addChild(this.displayContainer);
 
         // update the viewport when the canvas is resized
-        app.renderer.on('resize', (screenWidth, screenHeight) => {
+        this.app.renderer.on('resize', (screenWidth, screenHeight) => {
             this.displayContainer.hitArea = new PIXI.Rectangle(0, 0, screenWidth, screenHeight);
             this.SetViewport();
             this.UpdateViewport();
         });
 
         // handle zooming, unfinished
-        app.view.addEventListener('wheel', (e) => {
+        this.app.view.addEventListener('wheel', (e) => {
             let oldZoom = this.zoom;
             if (e.deltaY < 0) {
                 this.zoom *= this.zoomScale;
@@ -147,7 +148,7 @@ class Viewport {
         });
 
         // turn off context menu on right click
-        app.view.addEventListener('contextmenu', (e) => {
+        this.app.view.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
 
