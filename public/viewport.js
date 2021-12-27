@@ -79,6 +79,13 @@ class Viewport {
         // set of active, rendered chunk objects
         this.chunks = new Set();
 
+        // current brush colour
+        this.brushColour = {
+            r: 0,
+            g: 0,
+            b: 0
+        };
+
         // initialise the viewport and send to the server
         this.SetViewport();
         socket.send(JSONb.stringify({
@@ -96,10 +103,14 @@ class Viewport {
             view: document.getElementById('viewport-canvas')
         });
 
-        // add PIXI.js application once page loads
-        window.onload = () => {
-            document.body.appendChild(app.view);
-        }
+        // not sure where to put this
+        document.getElementById("brush-colour-selector").addEventListener("change", (ev) => {
+            // change current brush colour
+            let hex = ev.target.value;
+            this.brushColour.r = parseInt(hex.substring(1, 3), 16);
+            this.brushColour.g = parseInt(hex.substring(3, 5), 16);
+            this.brushColour.b = parseInt(hex.substring(5, 7), 16);
+        }, false);
 
         window.onresize = () => {
             this.app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -160,11 +171,7 @@ class Viewport {
                 event: "setpixel", 
                 data: {
                     position: this.PixelToWorld({x: e.data.global.x, y: e.data.global.y}), 
-                    colour: {
-                        r: Math.floor(Math.random() * 256), 
-                        g: Math.floor(Math.random() * 256), 
-                        b: Math.floor(Math.random() * 256)
-                    }
+                    colour: this.brushColour
                 }
             }));
         });
@@ -204,11 +211,7 @@ class Viewport {
                         array: this.worldPixelsToDraw.map((pos) => {
                             return {
                                 position: pos,
-                                colour: {
-                                    r: Math.floor(Math.random() * 256), 
-                                    g: Math.floor(Math.random() * 256), 
-                                    b: Math.floor(Math.random() * 256)
-                                }
+                                colour: this.brushColour
                             };
                         })
                     }
