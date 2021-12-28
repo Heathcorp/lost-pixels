@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@402&display=swap" rel="stylesheet">
+
         <link rel='stylesheet' href='style.css'>
         <script type='text/javascript' src='pixi.js'></script>
         <script src='json-bigint-client.js'></script>
@@ -9,17 +13,21 @@
     </head>
 
     <body>
-        <div class='main-container'>
+        <main class='main-container'>
+
             <canvas id='viewport-canvas'></canvas>
 
-            <section class='options-container'>
-                <div class='options-menu'>
-                    <input type="color" id="brush-colour-selector">
-                </div>
-                <div class='options-button'>
+            <section id='overlay-container'>
+                <div id='options-panel'>
+                    <div id='options-content'>
+                        hello<br>
+                        <input type="color" id="brush-colour-selector">
+                        <br>this is the options menu
+                    </div>
                     
                 </div>
             </section>
-        </div>
+
+        </main>
     </body>
 </html>
