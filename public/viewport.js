@@ -195,7 +195,14 @@ class Viewport {
                 let last = this.worldPixelsToDraw.at(-1);
                 let n = this.PixelToWorld({x: e.data.global.x, y: e.data.global.y});
                 if (!last || n.x != last.x || n.y != last.y) {
-                    this.worldPixelsToDraw.push(n);
+                    this.socket.send(JSONb.stringify({
+                        event: "setpixel", 
+                        data: {
+                            position: n, 
+                            colour: this.brushColour
+                        }
+                    }));
+                    //this.worldPixelsToDraw.push(n);
                 }
             }
         });
@@ -203,21 +210,21 @@ class Viewport {
         // left mouse released, send brush stroke if not empty and resets the mouse state
         this.displayContainer.on('mouseup', (e) => {
             this.mouseLeftDown = false;
-            if (this.worldPixelsToDraw.length) {
-                this.socket.send(JSONb.stringify({
-                    event: "setpixels", 
-                    data: {
-                        // need to redo the client-server comms here, it's too network intensive
-                        array: this.worldPixelsToDraw.map((pos) => {
-                            return {
-                                position: pos,
-                                colour: this.brushColour
-                            };
-                        })
-                    }
-                }));
-                this.worldPixelsToDraw = [];
-            }
+            // if (this.worldPixelsToDraw.length) {
+            //     this.socket.send(JSONb.stringify({
+            //         event: "setpixels", 
+            //         data: {
+            //             // need to redo the client-server comms here, it's too network intensive
+            //             array: this.worldPixelsToDraw.map((pos) => {
+            //                 return {
+            //                     position: pos,
+            //                     colour: this.brushColour
+            //                 };
+            //             })
+            //         }
+            //     }));
+            //     this.worldPixelsToDraw = [];
+            // }
         });
 
         // right-click / navigation dragging listeners:
