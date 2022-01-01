@@ -1,11 +1,14 @@
 * {
     --text-1: rgb(24, 20, 20);
     --text-2: rgb(59, 46, 46);
-    --background-1: rgb(242, 242, 242);
-    --background-2: rgb(161, 162, 180);
+    --background-1: rgb(77, 79, 102);
+    --background-2: rgb(77, 79, 102);
     --background-3: rgb(45, 48, 65);
     --primary-1: rgb(219, 47, 41);
     --primary-2: rgb(97, 64, 214);
+
+    --options-panel-width: 200px;
+    --options-panel-padding: 1rem;
 
     font-family: 'Cairo', sans-serif;
     font-size: 16px;
@@ -39,20 +42,44 @@ body {
     z-index: 2;
     position: relative;
     right: 0;
-    width: 200px;
+    /* width: var(--options-panel-width); */
     height: 100%;
     background-color: var(--background-2);
     border-right: 4px solid var(--background-3);
 }
 
 #options-content {
-    height: 100%;
-    padding: 0.5em;
+    padding: var(--options-panel-padding);
 }
 
+.colour-selection-panel {
+    border: 2px solid var(--background-3);
+}
+
+.main-colour-selector {
+    width: 6rem;
+    height: 6rem;
+
+    box-sizing: border-box;
+    border: 2px solid var(--background-3);
+}
 input[type='color'] {
-    width: 100px;
-    height: 100px;
-    border-width: 5px;
-    border-style: outset;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.palette-container {
+    display: grid;
+    grid-template-columns: repeat(5, 20%);
+
+    width: 12rem;
+    height: 7.5rem;
+}
+
+.saved-colour-card {
+    background-color: #7f7f7f;
+
+    box-sizing: border-box;
+    border: 2px solid var(--background-3);
 }

@@ -3,6 +3,23 @@ const { Buffer } = require('buffer');
 
 const socket = new WebSocket('ws://192.168.0.55');
 
+// misc reactive html scripts that need to run after the page has loaded
+window.addEventListener("load", (e) => {
+    let pcs = document.getElementById("primary-colour-selector");
+    pcs.addEventListener("input", (ev) => {
+        let hex = ev.target.value;
+        ev.target.parentElement.style.backgroundColor = hex;
+    });
+    pcs.parentElement.style.backgroundColor = pcs.value;
+
+    let scs = document.getElementById("secondary-colour-selector")
+    scs.addEventListener("input", (ev) => {
+        let hex = ev.target.value;
+        ev.target.parentElement.style.backgroundColor = hex;
+    });
+    scs.parentElement.style.backgroundColor = scs.value;
+});
+
 // called when client connects to server
 socket.onopen = (event) => {
     console.log("Connected");
@@ -103,10 +120,10 @@ class Viewport {
             view: document.getElementById('viewport-canvas')
         });
 
-        // not sure where to put this
-        document.getElementById("brush-colour-selector").addEventListener("change", (ev) => {
+        document.getElementById("primary-colour-selector").addEventListener("change", (ev) => {
             // change current brush colour
             let hex = ev.target.value;
+
             this.brushColour.r = parseInt(hex.substring(1, 3), 16);
             this.brushColour.g = parseInt(hex.substring(3, 5), 16);
             this.brushColour.b = parseInt(hex.substring(5, 7), 16);
