@@ -5,19 +5,38 @@ const socket = new WebSocket('ws://192.168.0.55');
 
 // misc reactive html scripts that need to run after the page has loaded
 window.addEventListener("load", (e) => {
+    // get primary and secondary colour selectors
     let pcs = document.getElementById("primary-colour-selector");
+    let scs = document.getElementById("secondary-colour-selector");
+    
+    // update background colour as user changes colours (fancy css wouldn't cut it)
     pcs.addEventListener("input", (ev) => {
         let hex = ev.target.value;
         ev.target.parentElement.style.backgroundColor = hex;
     });
-    pcs.parentElement.style.backgroundColor = pcs.value;
-
-    let scs = document.getElementById("secondary-colour-selector")
+    // same with the secondary
     scs.addEventListener("input", (ev) => {
         let hex = ev.target.value;
         ev.target.parentElement.style.backgroundColor = hex;
     });
+
+    // get old colours from local storage
+    pcs.value = window.localStorage.getItem("primary-colour") || "#000000";
+    scs.value = window.localStorage.getItem("secondary-colour") || "#ffffff";
+    
+    // need to add palette here
+
+    // finally initialise background colours for the main colour selectors
     scs.parentElement.style.backgroundColor = scs.value;
+    pcs.parentElement.style.backgroundColor = pcs.value;
+
+    // store colours to local storage when page unloads
+    window.addEventListener("beforeunload", (e) => {
+        window.localStorage.setItem("primary-colour", document.getElementById("primary-colour-selector").value);
+        window.localStorage.setItem("secondary-colour", document.getElementById("secondary-colour-selector").value);
+
+        // need to store palette also
+    });
 });
 
 // called when client connects to server
@@ -162,8 +181,8 @@ class Viewport {
                 return;
             }
 
-            if (this.zoom < 8) {
-                this.zoom = 8;
+            if (this.zoom < 4) {
+                this.zoom = 4;
             }
             else if (this.zoom > 128) {
                 this.zoom = 128;
