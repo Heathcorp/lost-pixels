@@ -10,6 +10,8 @@
         <script src='json-bigint-client.js'></script>
         <script src='buffer-client.js'></script>
         <script type='text/javascript' src='viewport.js'></script>
+
+        <title>Lost Pixels</title>
     </head>
 
     <body>
@@ -19,15 +21,16 @@
 
             <div id='overlay-container'>
                 <div id='options-panel'>
+                    <div id="options-triangle"></div>
                     <div id='options-content'>
 
                         <div class="colour-selection-panel">
                             <div style="display: flex;">
                                 <div class="main-colour-selector">
-                                    <input type="color" id="primary-colour-selector" value="#000000">
+                                    <input type="color" id="primary-colour-selector">
                                 </div>
                                 <div class="main-colour-selector">
-                                    <input type="color" id="secondary-colour-selector" value="#ffffff">
+                                    <input type="color" id="secondary-colour-selector">
                                 </div>
                             </div>
 
@@ -58,7 +61,19 @@
                                 <div class="saved-colour-card"></div>
                                 <div class="saved-colour-card"></div>
                             </div>
-                            
+                        </div>
+
+                        <div class="tool-selection-panel">
+                            <div class="tool-container">
+                                <div class="tool-select"></div>
+                                <div class="tool-select"></div>
+                                <div class="tool-select"></div>
+                                <div class="tool-select"></div>
+                                <div class="tool-select"></div>
+                                <div class="tool-select"></div>
+                                <div class="tool-select"></div>
+                                <div class="tool-select"></div>
+                            </div>
                         </div>
 
                     </div>

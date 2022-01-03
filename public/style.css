@@ -1,20 +1,17 @@
 * {
     --text-1: rgb(24, 20, 20);
     --text-2: rgb(59, 46, 46);
-    --background-1: rgb(77, 79, 102);
-    --background-2: rgb(77, 79, 102);
-    --background-3: rgb(45, 48, 65);
+    --background-1: rgb(255, 255, 255);
+    --background-2: rgb(127, 127, 127);
+    --background-3: rgb(0, 0, 0);
     --primary-1: rgb(219, 47, 41);
     --primary-2: rgb(97, 64, 214);
-
-    --options-panel-width: 200px;
-    --options-panel-padding: 1rem;
 
     font-family: 'Cairo', sans-serif;
     font-size: 16px;
     font-style: normal;
-    font-weight: 400;
-    color: var(--text-2);
+    font-weight: 500;
+    color: var(--text-1);
 }
 
 body {
@@ -42,18 +39,35 @@ body {
     z-index: 2;
     position: relative;
     right: 0;
-    /* width: var(--options-panel-width); */
     height: 100%;
-    background-color: var(--background-2);
-    border-right: 4px solid var(--background-3);
+    background-color: var(--background-1);
+    border-right: 2px solid var(--background-3);
+
+    left: -100%;
+    transition: left 0.125s;
+}
+
+#options-panel:hover {
+    left: 0%;
+}
+
+#options-triangle {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+
+    border: 1rem solid transparent;
+    border-left: 1rem solid var(--background-3);
 }
 
 #options-content {
-    padding: var(--options-panel-padding);
+    display: grid;
+    padding: 0.5rem;
+    gap: 0.5rem;
 }
 
-.colour-selection-panel {
-    border: 2px solid var(--background-3);
+.colour-selection-panel, .tool-selection-panel {
+    border: 1px solid var(--background-3);
 }
 
 .main-colour-selector {
@@ -61,7 +75,7 @@ body {
     height: 6rem;
 
     box-sizing: border-box;
-    border: 2px solid var(--background-3);
+    border: 1px solid var(--background-3);
 }
 input[type='color'] {
     opacity: 0;
@@ -71,7 +85,7 @@ input[type='color'] {
 
 .palette-container {
     display: grid;
-    grid-template-columns: repeat(5, 20%);
+    grid-template-columns: repeat(5, 2.4rem);
 
     width: 12rem;
     height: 7.5rem;
@@ -81,5 +95,18 @@ input[type='color'] {
     background-color: #7f7f7f;
 
     box-sizing: border-box;
-    border: 2px solid var(--background-3);
+    border: 1px solid var(--background-3);
+}
+
+.tool-container {
+    display: grid;
+    grid-template-columns: repeat(4, 3rem);
+
+    width: 12rem;
+    height: 6rem;
+}
+
+.tool-select {
+    background-color: var(--background-2);
+    border: 1px solid var(--background-3);
 }
