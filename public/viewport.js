@@ -25,17 +25,29 @@ window.addEventListener("load", (e) => {
     scs.value = window.localStorage.getItem("secondary-colour") || "#ffffff";
     
     // need to add palette here
+    let paletteCards = document.getElementsByClassName("saved-colour-card");
+    for (let i = 0; i < paletteCards.length; i++) {
+        let card = paletteCards[i];
+        card.style.backgroundColor = window.localStorage.getItem("palette-colour-" + i) || "#" + Math.floor(Math.random()*16777215).toString(16);
+        card.addEventListener("mousedown", (ev) => {
+            // set or get colour
+            ev.preventDefault();
+        });
+    }
 
     // finally initialise background colours for the main colour selectors
     scs.parentElement.style.backgroundColor = scs.value;
     pcs.parentElement.style.backgroundColor = pcs.value;
 
     // store colours to local storage when page unloads
-    window.addEventListener("beforeunload", (e) => {
-        window.localStorage.setItem("primary-colour", document.getElementById("primary-colour-selector").value);
-        window.localStorage.setItem("secondary-colour", document.getElementById("secondary-colour-selector").value);
+    window.addEventListener("beforeunload", (ev) => {
+        window.localStorage.setItem("primary-colour", pcs.value);
+        window.localStorage.setItem("secondary-colour", scs.value);
 
-        // need to store palette also
+        for (let i = 0; i < paletteCards.length; i++) {
+            let card = paletteCards[i];
+            window.localStorage.setItem("palette-colour-" + i, card.style.backgroundColor);
+        }
     });
 });
 
