@@ -3,6 +3,14 @@ const { Buffer } = require('buffer');
 
 const socket = new WebSocket('ws://192.168.0.55');
 
+// copied from stack overflow
+const rgb2hex = (rgb) => `#${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`;
+
+// need to refactor client-side, this global const shouldn't be necessary
+const brushData = {
+    primary: "#000000",
+    secondary: "#ffffff"
+}
 // misc reactive html scripts that need to run after the page has loaded
 window.addEventListener("load", (e) => {
     // get primary and secondary colour selectors
@@ -31,7 +39,24 @@ window.addEventListener("load", (e) => {
         card.style.backgroundColor = window.localStorage.getItem("palette-colour-" + i) || "#" + Math.floor(Math.random()*16777215).toString(16);
         card.addEventListener("mousedown", (ev) => {
             // set or get colour
-            ev.preventDefault();
+            let selector = pcs;
+            if (ev.shiftKey) {
+                selector = scs;
+            }
+            if (ev.button == 0) {
+                // left mouse, get colour from palette
+                let hex = rgb2hex(card.style.backgroundColor);
+                selector.value = hex;
+                selector.parentElement.style.backgroundColor = hex;
+                if (ev.shiftKey) {
+                    brushData.secondary = hex;
+                } else {
+                    brushData.primary = hex;
+                }
+            } else if (ev.button == 2) {
+                // right mouse, set palette colour
+                card.style.backgroundColor = selector.value;
+            }
         });
     }
 
@@ -50,6 +75,8 @@ window.addEventListener("load", (e) => {
         }
     });
 });
+// disable context menu
+window.oncontextmenu = function() { return false };
 
 // called when client connects to server
 socket.onopen = (event) => {
@@ -127,12 +154,27 @@ class Viewport {
         // set of active, rendered chunk objects
         this.chunks = new Set();
 
-        // current brush colour
-        this.brushColour = {
-            r: 0,
-            g: 0,
-            b: 0
+        // functional coding-patchwork to get current brush colour
+        this.shiftKeyDown = false;
+        this.brushColour = () => {
+            let ret = {r: 0, g: 0, b: 0};
+            let hex = "#000000";
+            if (this.shiftKeyDown) {
+                hex = brushData.secondary;
+            } else {
+                hex = brushData.primary;
+            }
+            ret.r = parseInt(hex.substring(1, 3), 16);
+            ret.g = parseInt(hex.substring(3, 5), 16);
+            ret.b = parseInt(hex.substring(5, 7), 16);
+            return ret;
         };
+        document.addEventListener("keydown", (ev) => {
+            if (ev.key == "Shift") this.shiftKeyDown = true;
+        });
+        document.addEventListener("keyup", (ev) => {
+            if (ev.key == "Shift") this.shiftKeyDown = false;
+        });
 
         // initialise the viewport and send to the server
         this.SetViewport();
@@ -219,7 +261,7 @@ class Viewport {
                 event: "setpixel", 
                 data: {
                     position: this.PixelToWorld({x: e.data.global.x, y: e.data.global.y}), 
-                    colour: this.brushColour
+                    colour: this.brushColour()
                 }
             }));
         });
@@ -247,7 +289,7 @@ class Viewport {
                         event: "setpixel", 
                         data: {
                             position: n, 
-                            colour: this.brushColour
+                            colour: this.brushColour()
                         }
                     }));
                     //this.worldPixelsToDraw.push(n);
