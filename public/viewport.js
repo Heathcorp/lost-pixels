@@ -31,6 +31,8 @@ window.addEventListener("load", (e) => {
     // get old colours from local storage
     pcs.value = window.localStorage.getItem("primary-colour") || "#000000";
     scs.value = window.localStorage.getItem("secondary-colour") || "#ffffff";
+    brushData.primary = pcs.value;
+    brushData.secondary = scs.value;
     
     // need to add palette here
     let paletteCards = document.getElementsByClassName("saved-colour-card");
@@ -153,6 +155,7 @@ class Viewport {
 
         // set of active, rendered chunk objects
         this.chunks = new Set();
+
 
         // functional coding-patchwork to get current brush colour
         this.shiftKeyDown = false;
@@ -317,7 +320,7 @@ class Viewport {
             // }
         });
 
-        // right-click / navigation dragging listeners:
+        // right-click / navigation dragging variables:
         this.mouseRightDown = false;
         this.mouseRightStartPos = {x: 0, y: 0};
         this.centerMoveStartPos = this.center;
@@ -439,4 +442,14 @@ class Viewport {
         };
         return pixelPos;
     }
+}
+
+class Tool {
+    constructor() {
+        
+    }
+}
+
+class PaintBrush extends Tool {
+    
 }
