@@ -21,11 +21,13 @@ window.addEventListener("load", (e) => {
     pcs.addEventListener("input", (ev) => {
         let hex = ev.target.value;
         ev.target.parentElement.style.backgroundColor = hex;
+        brushData.primary = hex;
     });
     // same with the secondary
     scs.addEventListener("input", (ev) => {
         let hex = ev.target.value;
         ev.target.parentElement.style.backgroundColor = hex;
+        brushData.secondary = hex;
     });
 
     // get old colours from local storage
@@ -195,15 +197,6 @@ class Viewport {
             height: window.innerHeight,
             view: document.getElementById('viewport-canvas')
         });
-
-        document.getElementById("primary-colour-selector").addEventListener("change", (ev) => {
-            // change current brush colour
-            let hex = ev.target.value;
-
-            this.brushColour.r = parseInt(hex.substring(1, 3), 16);
-            this.brushColour.g = parseInt(hex.substring(3, 5), 16);
-            this.brushColour.b = parseInt(hex.substring(5, 7), 16);
-        }, false);
 
         window.onresize = () => {
             this.app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -445,7 +438,8 @@ class Viewport {
 }
 
 class Tool {
-    constructor() {
+    constructor(pixiView) {
+        this.graphics = new PIXI.Graphics();
         
     }
 }
