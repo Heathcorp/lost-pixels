@@ -43,7 +43,7 @@ body {
     background-color: var(--background-1);
     border-right: 2px solid var(--background-3);
 
-    left: -100%;
+    left: -00%;
     transition: left 0.125s;
 }
 
@@ -103,10 +103,16 @@ input[type='color'] {
     grid-template-columns: repeat(4, 3rem);
 
     width: 12rem;
-    height: 6rem;
 }
 
 .tool-select {
+    display: flex;
     background-color: var(--background-2);
     border: 1px solid var(--background-3);
+}
+
+path {
+    fill: none;
+    stroke: var(--background-3);
+    stroke-width: 4px;
 }
