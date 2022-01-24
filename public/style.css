@@ -32,32 +32,30 @@ body {
 
 #overlay-container {
     position: absolute;
-    height: 100vh;
+    height: 100vw;
 }
 
 #options-panel {
     z-index: 2;
     position: relative;
-    right: 0;
-    height: 100%;
     background-color: var(--background-1);
-    border-right: 2px solid var(--background-3);
+    border: 2px solid var(--background-3);
 
-    left: -00%;
-    transition: left 0.125s;
+    top: -13.375rem;
+    transition: top 0.125s;
 }
 
 #options-panel:hover {
-    left: 0%;
+    top: 0%;
 }
 
 #options-triangle {
     position: absolute;
-    left: 100%;
-    top: 50%;
+    top: 100%;
+    left: 5.5rem;
 
     border: 1rem solid transparent;
-    border-left: 1rem solid var(--background-3);
+    border-top: 1rem solid var(--background-3);
 }
 
 #options-content {
