@@ -16,13 +16,33 @@ export class World {
         
     }
 
-    LoadSession() {
+    LoadSession(session: Session) {
+        // session.events.on()
+        
+        // session.onresize = () => {
 
+        // }
     }
 }
 
 export class Chunk {
+    exists: boolean
+
     constructor() {
 
+    }
+}
+
+export class Point {
+    x: BigInt
+    y: BigInt
+
+    constructor(x: BigInt, y: BigInt) {
+        this.x = x
+        this.y = y
+    }
+
+    get chunk(): Chunk {
+        return new Chunk(); // temp
     }
 }
