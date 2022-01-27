@@ -1,4 +1,3 @@
-const path = require('path')
 const fs = require('fs')
 
 import { Session } from './session'
@@ -9,6 +8,7 @@ export class World {
 
     constructor(directory: string) {
         this.loadedChunks = new Set<Chunk>();
+        this.activeSessions = new Set<Session>();
 
     }
 
@@ -17,11 +17,13 @@ export class World {
     }
 
     LoadSession(session: Session) {
-        // session.events.on()
-        
-        // session.onresize = () => {
+        session.events.on('close', () => {
 
-        // }
+        })
+        
+        session.events.on('resize', () => {
+
+        })
     }
 }
 
@@ -29,7 +31,13 @@ export class Chunk {
     exists: boolean
 
     constructor() {
+        this.exists = false
+    }
 
+    // static members
+    static allCurrentChunks: Set<Chunk>
+    static fromPoint(point: Point): Chunk {
+        return new Chunk(); // temp
     }
 }
 
@@ -43,6 +51,6 @@ export class Point {
     }
 
     get chunk(): Chunk {
-        return new Chunk(); // temp
+        return Chunk.fromPoint(this);
     }
 }
