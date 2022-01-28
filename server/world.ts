@@ -29,9 +29,11 @@ export class World {
 
 export class Chunk {
     exists: boolean
+    loaded: boolean
 
     constructor() {
         this.exists = false
+        this.loaded = false
     }
 
     // static members
