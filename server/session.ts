@@ -18,12 +18,13 @@ export class Session {
 
     private addListeners() {
         this.socket.on('message', (msg: any) => {
-            if (i_Message(JSONb.parse(msg))) console.log(true)
+            if (i_message(JSONb.parse(msg))) console.log(true)
         })
     }
 }
 
-interface Message {
+// socket messages interfaces
+interface m_message {
     event: string,
     data: object
 }
@@ -38,8 +39,13 @@ interface m_setpixel {
     colour: string
 }
 
+interface m_setviewport {
+    a: m_position,
+    b: m_position
+}
+
 // type guards:
-function i_Message(msg: any): msg is Message {
+function i_message(msg: any): msg is m_message {
     return (Object.entries(msg).length === 2
         && msg.event !== null && msg.event !== undefined
         && msg.data !== null && msg.data !== undefined
@@ -47,7 +53,7 @@ function i_Message(msg: any): msg is Message {
     )
 }
 
-function i_Position(pos: any): pos is m_position {
+function i_position(pos: any): pos is m_position {
     return (Object.entries(pos).length === 2
         && pos.x !== null && pos.x !== undefined
         && pos.x !== null && pos.x !== undefined
@@ -57,9 +63,27 @@ function i_Position(pos: any): pos is m_position {
 }
 
 const regex = new RegExp('^[0-9a-f]{6}$') // string must be exactly 6 digits of lowercase hex
-function i_Colour(col: string): boolean {
+function i_colour(col: string): boolean {
     return (col !== null && col !== undefined
         && typeof col === 'string'
         && regex.test(col)
+    )
+}
+
+function i_setpixel(obj: any): obj is m_setpixel {
+    return (Object.entries(obj).length === 2
+        && obj.position !== null && obj.position !== undefined
+        && typeof obj.position === 'object'
+        && i_position(obj.position)
+        && i_colour(obj.colour)
+    )
+}
+
+function i_viewport(obj: any): obj is m_setviewport {
+    return (Object.entries(obj).length === 2
+        && obj.a !== null && obj.a !== undefined
+        && obj.b !== null && obj.b !== undefined
+        && typeof obj.a === 'object' && typeof obj.b === 'object'
+        && i_position(obj.a) && i_position(obj.b)
     )
 }
