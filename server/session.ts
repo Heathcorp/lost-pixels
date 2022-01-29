@@ -18,8 +18,18 @@ export class Session {
 
     private addListeners() {
         this.socket.on('message', (msg: any) => {
-            if (i_message(JSONb.parse(msg))) console.log(true)
+            if (i_message(JSONb.parse(msg))) {
+                
+            } else {
+                // client sent bad message, possibly malicious, probably disconnect them
+                this.closeSession(1003)
+            }
         })
+    }
+
+    closeSession(code: Number) {
+        this.socket.close(code)
+        this.events.emit('close')
     }
 }
 
