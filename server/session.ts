@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events'
-import { ReadPosition } from 'fs'
-import { isParenthesizedTypeNode } from 'typescript';
+import { ObjectFlags } from 'typescript';
 
 const JSONb = require('json-bigint')({useNativeBigInt: true});
 
@@ -18,10 +17,22 @@ export class Session {
 
     private addListeners() {
         this.socket.on('message', (msg: any) => {
-            if (i_message(JSONb.parse(msg))) {
-                
-            } else {
-                // client sent bad message, possibly malicious, probably disconnect them
+            msg = <m_message>JSONb.parse(msg)
+            
+            let isValid: boolean = false
+            if (isValid = i_message(msg)) {
+                switch (msg.event) {
+                    case 'setpixel':
+                        if (isValid = i_setpixel(msg.data)) this.events.emit('setpixel', msg.data.position, msg.data.colour)
+                        break;
+                    case 'setviewport':
+                        if (isValid = i_setviewport(msg.data)) this.events.emit('setviewport', msg.data)
+                        break;
+                }
+            }
+
+            if (!isValid) {
+                // client sent bad message, possibly malicious, disconnect them
                 this.closeSession(1003)
             }
         })
@@ -89,11 +100,12 @@ function i_setpixel(obj: any): obj is m_setpixel {
     )
 }
 
-function i_viewport(obj: any): obj is m_setviewport {
+function i_setviewport(obj: any): obj is m_setviewport {
     return (Object.entries(obj).length === 2
         && obj.a !== null && obj.a !== undefined
         && obj.b !== null && obj.b !== undefined
         && typeof obj.a === 'object' && typeof obj.b === 'object'
         && i_position(obj.a) && i_position(obj.b)
+        && obj.a.x < obj.b.x && obj.a.y < obj.b.y
     )
 }

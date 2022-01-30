@@ -21,7 +21,11 @@ export class World {
 
         })
         
-        session.events.on('resize', () => {
+        session.events.on('setviewport', () => {
+
+        })
+
+        session.events.on('setpixel', () => {
 
         })
     }
