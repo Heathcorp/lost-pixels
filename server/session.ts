@@ -3,14 +3,20 @@ import { ObjectFlags } from 'typescript';
 
 const JSONb = require('json-bigint')({useNativeBigInt: true});
 
+import { Area, Point, Chunk } from './world'
 
 export class Session {
     events: EventEmitter
     socket: any
 
+    area: Area
+
     constructor(socket: any) {
         this.events = new EventEmitter()
         this.socket = socket
+
+        // temp
+        this.area = new Area(new Point(0n, 0n), new Point(0n, 0n))
 
         this.addListeners()
     }
@@ -26,7 +32,10 @@ export class Session {
                         if (isValid = i_setpixel(msg.data)) this.events.emit('setpixel', msg.data.position, msg.data.colour)
                         break;
                     case 'setviewport':
-                        if (isValid = i_setviewport(msg.data)) this.events.emit('setviewport', msg.data)
+                        if (isValid = i_setviewport(msg.data)) {
+                            this.area.Set(new Point(msg.data.a.x, msg.data.a.y), new Point(msg.data.b.x, msg.data.b.y))
+                            this.events.emit('setviewport', msg.data)
+                        }
                         break;
                 }
             }
