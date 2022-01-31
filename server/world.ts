@@ -32,7 +32,7 @@ export class World {
     }
 }
 
-class Chunk {
+export class Chunk {
     exists: boolean
     loaded: boolean
 
@@ -48,7 +48,7 @@ class Chunk {
     }
 }
 
-class Point {
+export class Point {
     x: BigInt
     y: BigInt
 
@@ -63,11 +63,17 @@ class Point {
 }
 
 // defines a rectangular area of the canvas
-class Area {
+export class Area {
     min: Point
     max: Point
 
     constructor(a: Point, b: Point) {
+        // maybe need some checks here but I think we can live without it for now
+        this.min = a
+        this.max = b
+    }
+
+    Set(a: Point, b: Point) {
         // maybe need some checks here but I think we can live without it for now
         this.min = a
         this.max = b
