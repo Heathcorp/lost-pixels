@@ -1,4 +1,5 @@
 const fs = require('fs')
+const crypto = require('crypto');
 
 import { Session } from './session'
 
@@ -31,7 +32,7 @@ export class World {
     }
 }
 
-export class Chunk {
+class Chunk {
     exists: boolean
     loaded: boolean
 
@@ -47,7 +48,7 @@ export class Chunk {
     }
 }
 
-export class Point {
+class Point {
     x: BigInt
     y: BigInt
 
@@ -58,5 +59,25 @@ export class Point {
 
     get chunk(): Chunk {
         return Chunk.fromPoint(this);
+    }
+}
+
+// defines a rectangular area of the canvas
+class Area {
+    min: Point
+    max: Point
+
+    constructor(a: Point, b: Point) {
+        // maybe need some checks here but I think we can live without it for now
+        this.min = a
+        this.max = b
+    }
+
+    doesContain(point: Point): boolean {
+        return (point.x >= this.min.x
+            && point.x <= this.max.x
+            && point.y >= this.min.y
+            && point.y <= this.max.y
+        )
     }
 }

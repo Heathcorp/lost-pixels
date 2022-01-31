@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 require('express-ws')(app);
 
-import { Point, World, Chunk } from './world'
+import { World } from './world'
 import { Session } from './session'
 
 // serve all files in /public     (((((temporary}}}}}
