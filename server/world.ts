@@ -64,13 +64,13 @@ export class Point {
 
 // defines a rectangular area of the canvas
 export class Area {
+    // @ts-ignore
     min: Point
+    // @ts-ignore
     max: Point
 
     constructor(a: Point, b: Point) {
-        // maybe need some checks here but I think we can live without it for now
-        this.min = a
-        this.max = b
+        this.Set(a, b)
     }
 
     Set(a: Point, b: Point) {
