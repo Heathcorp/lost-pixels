@@ -1,0 +1,5 @@
+{
+    "world_name" : "../test_world",
+    "max_view_distance" : 512,
+    "max_sessions" : 100
+}
