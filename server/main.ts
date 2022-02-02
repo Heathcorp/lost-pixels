@@ -1,4 +1,8 @@
 const path = require('path')
+const fs = require('fs')
+
+// load server configuration
+const config = JSON.parse(fs.readFileSync('config.json'))
 
 const express = require('express');
 const app = express();
@@ -12,10 +16,19 @@ app.use(express.static('public'));
 app.listen(80);
 
 
-const world = new World(path.join(__dirname, "../test_world"))
+const world = new World(path.join(__dirname, config.world_name))
+var sessionCount = 0
 
 app.ws('/', (socket: any, req: any) => {
     // client connected
-    let newSession = new Session(socket)
-    world.LoadSession(newSession)
+    if (sessionCount == config.max_sessions) {
+        // refuse connection or place user in queue
+    } else {
+        sessionCount++
+        let newSession = new Session(socket)
+        newSession.events.on('close', () => {
+            sessionCount--
+        })
+        world.LoadSession(newSession)
+    }
 })
