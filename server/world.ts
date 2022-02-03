@@ -13,7 +13,7 @@ export class World {
 
     }
 
-    SetPixel() {
+    SetPixel(position: Point, colour: string) {
         
     }
 
@@ -39,6 +39,11 @@ export class Chunk {
     constructor() {
         this.exists = false
         this.loaded = false
+    }
+
+    public SetPixel(position: Point, colour: string)
+    {
+
     }
 
     // static members
