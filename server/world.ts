@@ -1,5 +1,5 @@
 const fs = require('fs')
-const crypto = require('crypto');
+const path = require('path')
 
 import { Session } from './session'
 
@@ -36,9 +36,14 @@ export class Chunk {
     exists: boolean
     loaded: boolean
 
-    constructor() {
+    coordinates: Point
+
+    constructor(chunkPos: Point) {
         this.exists = false
         this.loaded = false
+        this.fileName = ''
+        
+        this.coordinates = chunkPos
     }
 
     public SetPixel(position: Point, colour: string)
@@ -46,9 +51,28 @@ export class Chunk {
 
     }
 
+    fileName: string
+    get file(): string {
+        if (this.fileName !== '') { return this.fileName }
+
+        // not sure how to name the files just yet, tbd
+        // temporarily borrowing from the old codebase's way of doing it
+        
+        const crypto = require('crypto');
+        
+        // chunk hash = sha256(sha256(x) concat sha256(y))
+        let xHash = crypto.createHash('sha256').update(this.coordinates.x.toString(16)).digest('hex');
+        let yHash = crypto.createHash('sha256').update(this.coordinates.y.toString(16)).digest('hex');
+        let hash = crypto.createHash('sha256').update(xHash + yHash).digest('hex');
+
+        return (this.fileName = hash)
+    }
+
     // static members
     static allCurrentChunks: Set<Chunk>
     static fromPoint(point: Point): Chunk {
+        // temporarily using old codebase chunk sizing
+        
         return new Chunk(); // temp
     }
 }
