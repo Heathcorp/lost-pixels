@@ -37,19 +37,27 @@ export class Chunk {
     exists: boolean
     loaded: boolean
 
+    buffer: Buffer
+
     coordinates: Point
 
-    constructor(chunkPos: Point) {
+    private constructor(chunkPos: Point) {
         this.exists = false
         this.loaded = false
         this.fileName = ''
+
+        this.buffer = Buffer.from('')
         
         this.coordinates = chunkPos
     }
 
     public SetPixel(position: Point, colour: string)
     {
-
+        // convert position to relative chunk position
+        // convert string into r g b components
+        if (this.loaded) {
+            
+        }
     }
 
     fileName: string
