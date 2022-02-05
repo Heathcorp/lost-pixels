@@ -2,7 +2,7 @@ const path = require('path')
 const fs = require('fs')
 
 // load server configuration
-const config = JSON.parse(fs.readFileSync('config.json'))
+export const config = JSON.parse(fs.readFileSync('config.json'))
 
 const express = require('express');
 const app = express();

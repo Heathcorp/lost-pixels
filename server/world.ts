@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 
 import { Session } from './session'
+import { config } from './main'
 
 export class World {
     loadedChunks: Set<Chunk>
@@ -71,13 +72,14 @@ export class Chunk {
     // static members
     static allCurrentChunks: Array<Chunk>
     static fromPoint(point: Point): Chunk {
-        let cx = point.x / 64n
-        let cy = point.y / 64n
+        const w = BigInt(config.chunk_size)
+        let cx = point.x / w
+        let cy = point.y / w
         if (point.x < 0n) {
-            cx = ((1n + point.x) / 64n) - 1n
+            cx = ((1n + point.x) / w) - 1n
         }
         if (point.y < 0n) {
-            cy = ((1n + point.y) / 64n) - 1n
+            cy = ((1n + point.y) / w) - 1n
         }
 
         let cpos = new Point(cx, cy)
