@@ -69,25 +69,44 @@ export class Chunk {
     }
 
     // static members
-    static allCurrentChunks: Set<Chunk>
+    static allCurrentChunks: Array<Chunk>
     static fromPoint(point: Point): Chunk {
-        // temporarily using old codebase chunk sizing
-        
-        return new Chunk(); // temp
+        let cx = point.x / 64n
+        let cy = point.y / 64n
+        if (point.x < 0n) {
+            cx = ((1n + point.x) / 64n) - 1n
+        }
+        if (point.y < 0n) {
+            cy = ((1n + point.y) / 64n) - 1n
+        }
+
+        let cpos = new Point(cx, cy)
+
+        let c: any
+
+        if (c = this.allCurrentChunks.find((value) => value.coordinates.equals(cpos))) { return c }
+
+        c = new Chunk(cpos)
+        this.allCurrentChunks.push(c)
+        return c
     }
 }
 
 export class Point {
-    x: BigInt
-    y: BigInt
+    x: bigint
+    y: bigint
 
-    constructor(x: BigInt, y: BigInt) {
+    constructor(x: bigint, y: bigint) {
         this.x = x
         this.y = y
     }
 
     get chunk(): Chunk {
         return Chunk.fromPoint(this);
+    }
+
+    equals(other: Point) {
+        return (other.x === this.x && other.y === this.y)
     }
 }
 

@@ -60,8 +60,8 @@ interface m_message {
 }
 
 interface m_position {
-    x: BigInt,
-    y: BigInt
+    x: bigint,
+    y: bigint
 }
 
 interface m_setpixel {
