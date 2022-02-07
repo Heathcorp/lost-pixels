@@ -17,12 +17,12 @@ const world = new world_1.World(path.join(__dirname, exports.config.world_name))
 var sessionCount = 0;
 app.ws('/', (socket, req) => {
     // client connected
-    if (sessionCount == exports.config.max_sessions) {
+    if (sessionCount >= exports.config.max_sessions) {
         // refuse connection or place user in queue
     }
     else {
         sessionCount++;
-        let newSession = new session_1.Session(socket);
+        const newSession = new session_1.Session(socket);
         newSession.events.on('close', () => {
             sessionCount--;
         });

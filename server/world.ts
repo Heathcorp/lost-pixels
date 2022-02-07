@@ -15,7 +15,18 @@ export class World {
     }
 
     SetPixel(position: Point, colour: string) {
-        
+        // convert position to relative chunk position
+        let x = position.x % config.chunk_size
+        let y = position.y % config.chunk_size
+        if (x < 0n) { x += config.chunk_size }
+        if (y < 0n) { y += config.chunk_size }
+
+        const relPos = new Point(x, y)
+        console.log(relPos)
+        console.log(position)
+        console.log(position.chunk)
+
+        position.chunk.SetPixel(relPos, colour)
     }
 
     LoadSession(session: Session) {
@@ -27,8 +38,8 @@ export class World {
 
         })
 
-        session.events.on('setpixel', () => {
-
+        session.events.on('setpixel', (position: Point, colour: string) => {
+            this.SetPixel(position, colour)
         })
     }
 }
@@ -53,8 +64,12 @@ export class Chunk {
 
     public SetPixel(position: Point, colour: string)
     {
-        // convert position to relative chunk position
-        // convert string into r g b components
+        // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
+        let cbuffer = Buffer.from([0x127, 0x127, 0x127])
+        let buffer = Buffer.alloc(config.chunk_size * config.chunk_size * 3)
+        buffer.fill('\0')
+        console.log(buffer)
+
         if (this.loaded) {
             
         }
@@ -92,12 +107,15 @@ export class Chunk {
 
         let cpos = new Point(cx, cy)
 
-        let c: any
-
-        if (c = this.allCurrentChunks.find((value) => value.coordinates.equals(cpos))) { return c }
+        let c = this.allCurrentChunks.find((value) => value.coordinates.equals(cpos))
+        console.log(c)
+        if (c) { return c }
+        console.log(c)
 
         c = new Chunk(cpos)
         this.allCurrentChunks.push(c)
+        console.log(c)
+
         return c
     }
 }
@@ -111,8 +129,10 @@ export class Point {
         this.y = y
     }
 
-    get chunk(): Chunk {
-        return Chunk.fromPoint(this);
+    public get chunk(): Chunk {
+        let c = Chunk.fromPoint(this)
+        console.log(c)
+        return c
     }
 
     equals(other: Point) {

@@ -25,11 +25,12 @@ export class Session {
         this.socket.on('message', (msg: any) => {
             msg = <m_message>JSONb.parse(msg)
             
+            // if isValid trips false at any point here then the client gets disconnected
             let isValid: boolean = false
             if (isValid = i_message(msg)) {
                 switch (msg.event) {
                     case 'setpixel':
-                        if (isValid = i_setpixel(msg.data)) this.events.emit('setpixel', msg.data.position, msg.data.colour)
+                        if (isValid = i_setpixel(msg.data)) { this.events.emit('setpixel', new Point(msg.data.position.x, msg.data.position.y), msg.data.colour) }
                         break;
                     case 'setviewport':
                         if (isValid = i_setviewport(msg.data)) {
@@ -44,6 +45,10 @@ export class Session {
                 // client sent bad message, possibly malicious, disconnect them
                 this.closeSession(1003)
             }
+        })
+
+        this.socket.on('close', () => {
+            this.events.emit('close')
         })
     }
 

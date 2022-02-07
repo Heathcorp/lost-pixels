@@ -3,25 +3,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Session = void 0;
 const events_1 = require("events");
 const JSONb = require('json-bigint')({ useNativeBigInt: true });
+const world_1 = require("./world");
 class Session {
     constructor(socket) {
         this.events = new events_1.EventEmitter();
         this.socket = socket;
+        // temp
+        this.area = new world_1.Area(new world_1.Point(0n, 0n), new world_1.Point(0n, 0n));
         this.addListeners();
     }
     addListeners() {
         this.socket.on('message', (msg) => {
             msg = JSONb.parse(msg);
+            // if isValid trips false at any point here then the client gets disconnected
             let isValid = false;
             if (isValid = i_message(msg)) {
                 switch (msg.event) {
                     case 'setpixel':
-                        if (isValid = i_setpixel(msg.data))
-                            this.events.emit('setpixel', msg.data.position, msg.data.colour);
+                        if (isValid = i_setpixel(msg.data)) {
+                            this.events.emit('setpixel', new world_1.Point(msg.data.position.x, msg.data.position.y), msg.data.colour);
+                        }
                         break;
                     case 'setviewport':
-                        if (isValid = i_setviewport(msg.data))
+                        if (isValid = i_setviewport(msg.data)) {
+                            this.area.Set(new world_1.Point(msg.data.a.x, msg.data.a.y), new world_1.Point(msg.data.b.x, msg.data.b.y));
                             this.events.emit('setviewport', msg.data);
+                        }
                         break;
                 }
             }
@@ -29,6 +36,9 @@ class Session {
                 // client sent bad message, possibly malicious, disconnect them
                 this.closeSession(1003);
             }
+        });
+        this.socket.on('close', () => {
+            this.events.emit('close');
         });
     }
     closeSession(code) {

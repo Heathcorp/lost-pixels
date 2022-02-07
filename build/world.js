@@ -1,46 +1,116 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.World = void 0;
+exports.Area = exports.Point = exports.Chunk = exports.World = void 0;
 const fs = require('fs');
-const crypto = require('crypto');
+const path = require('path');
+const main_1 = require("./main");
 class World {
     constructor(directory) {
         this.loadedChunks = new Set();
         this.activeSessions = new Set();
     }
-    SetPixel() {
+    SetPixel(position, colour) {
+        // convert position to relative chunk position
+        let x = position.x % main_1.config.chunk_size;
+        let y = position.y % main_1.config.chunk_size;
+        if (x < 0n) {
+            x += main_1.config.chunk_size;
+        }
+        if (y < 0n) {
+            y += main_1.config.chunk_size;
+        }
+        const relPos = new Point(x, y);
+        console.log(relPos);
+        console.log(position);
+        console.log(position.chunk);
+        position.chunk.SetPixel(relPos, colour);
     }
     LoadSession(session) {
         session.events.on('close', () => {
         });
         session.events.on('setviewport', () => {
         });
-        session.events.on('setpixel', () => {
+        session.events.on('setpixel', (position, colour) => {
+            this.SetPixel(position, colour);
         });
     }
 }
 exports.World = World;
 class Chunk {
-    constructor() {
+    constructor(chunkPos) {
         this.exists = false;
         this.loaded = false;
+        this.fileName = '';
+        this.buffer = Buffer.from('');
+        this.coordinates = chunkPos;
+    }
+    SetPixel(position, colour) {
+        // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
+        let cbuffer = Buffer.from([0x127, 0x127, 0x127]);
+        let buffer = Buffer.alloc(main_1.config.chunk_size * main_1.config.chunk_size * 3);
+        buffer.fill('\0');
+        console.log(buffer);
+        if (this.loaded) {
+        }
+    }
+    get file() {
+        if (this.fileName !== '') {
+            return this.fileName;
+        }
+        // not sure how to name the files just yet, tbd
+        // temporarily borrowing from the old codebase's way of doing it
+        const crypto = require('crypto');
+        // chunk hash = sha256(sha256(x) concat sha256(y))
+        let xHash = crypto.createHash('sha256').update(this.coordinates.x.toString(16)).digest('hex');
+        let yHash = crypto.createHash('sha256').update(this.coordinates.y.toString(16)).digest('hex');
+        let hash = crypto.createHash('sha256').update(xHash + yHash).digest('hex');
+        return (this.fileName = hash);
     }
     static fromPoint(point) {
-        return new Chunk(); // temp
+        const w = BigInt(main_1.config.chunk_size);
+        let cx = point.x / w;
+        let cy = point.y / w;
+        if (point.x < 0n) {
+            cx = ((1n + point.x) / w) - 1n;
+        }
+        if (point.y < 0n) {
+            cy = ((1n + point.y) / w) - 1n;
+        }
+        let cpos = new Point(cx, cy);
+        let c = this.allCurrentChunks.find((value) => value.coordinates.equals(cpos));
+        console.log(c);
+        if (c) {
+            return c;
+        }
+        console.log(c);
+        c = new Chunk(cpos);
+        this.allCurrentChunks.push(c);
+        console.log(c);
+        return c;
     }
 }
+exports.Chunk = Chunk;
 class Point {
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
     get chunk() {
-        return Chunk.fromPoint(this);
+        let c = Chunk.fromPoint(this);
+        console.log(c);
+        return c;
+    }
+    equals(other) {
+        return (other.x === this.x && other.y === this.y);
     }
 }
+exports.Point = Point;
 // defines a rectangular area of the canvas
 class Area {
     constructor(a, b) {
+        this.Set(a, b);
+    }
+    Set(a, b) {
         // maybe need some checks here but I think we can live without it for now
         this.min = a;
         this.max = b;
@@ -52,3 +122,4 @@ class Area {
             && point.y <= this.max.y);
     }
 }
+exports.Area = Area;

@@ -21,11 +21,11 @@ var sessionCount = 0
 
 app.ws('/', (socket: any, req: any) => {
     // client connected
-    if (sessionCount == config.max_sessions) {
+    if (sessionCount >= config.max_sessions) {
         // refuse connection or place user in queue
     } else {
         sessionCount++
-        let newSession = new Session(socket)
+        const newSession = new Session(socket)
         newSession.events.on('close', () => {
             sessionCount--
         })
