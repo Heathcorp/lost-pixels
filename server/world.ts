@@ -15,16 +15,14 @@ export class World {
     }
 
     SetPixel(position: Point, colour: string) {
+        const w = BigInt(config.chunk_size)
         // convert position to relative chunk position
-        let x = position.x % config.chunk_size
-        let y = position.y % config.chunk_size
-        if (x < 0n) { x += config.chunk_size }
-        if (y < 0n) { y += config.chunk_size }
+        let x = position.x % w
+        let y = position.y % w
+        if (x < 0n) { x += w }
+        if (y < 0n) { y += w }
 
         const relPos = new Point(x, y)
-        console.log(relPos)
-        console.log(position)
-        console.log(position.chunk)
 
         position.chunk.SetPixel(relPos, colour)
     }
@@ -68,7 +66,6 @@ export class Chunk {
         let cbuffer = Buffer.from([0x127, 0x127, 0x127])
         let buffer = Buffer.alloc(config.chunk_size * config.chunk_size * 3)
         buffer.fill('\0')
-        console.log(buffer)
 
         if (this.loaded) {
             
@@ -93,9 +90,10 @@ export class Chunk {
     }
 
     // static members
-    static allCurrentChunks: Array<Chunk>
+    static allCurrentChunks: Array<Chunk> = []
     static fromPoint(point: Point): Chunk {
         const w = BigInt(config.chunk_size)
+        
         let cx = point.x / w
         let cy = point.y / w
         if (point.x < 0n) {
@@ -108,13 +106,13 @@ export class Chunk {
         let cpos = new Point(cx, cy)
 
         let c = this.allCurrentChunks.find((value) => value.coordinates.equals(cpos))
-        console.log(c)
+        
         if (c) { return c }
-        console.log(c)
+        
 
         c = new Chunk(cpos)
         this.allCurrentChunks.push(c)
-        console.log(c)
+        
 
         return c
     }
@@ -125,13 +123,12 @@ export class Point {
     y: bigint
 
     constructor(x: bigint, y: bigint) {
-        this.x = x
-        this.y = y
+        this.x = BigInt(x)
+        this.y = BigInt(y)
     }
 
     public get chunk(): Chunk {
         let c = Chunk.fromPoint(this)
-        console.log(c)
         return c
     }
 

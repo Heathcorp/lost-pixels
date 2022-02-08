@@ -10,19 +10,17 @@ class World {
         this.activeSessions = new Set();
     }
     SetPixel(position, colour) {
+        const w = BigInt(main_1.config.chunk_size);
         // convert position to relative chunk position
-        let x = position.x % main_1.config.chunk_size;
-        let y = position.y % main_1.config.chunk_size;
+        let x = position.x % w;
+        let y = position.y % w;
         if (x < 0n) {
-            x += main_1.config.chunk_size;
+            x += w;
         }
         if (y < 0n) {
-            y += main_1.config.chunk_size;
+            y += w;
         }
         const relPos = new Point(x, y);
-        console.log(relPos);
-        console.log(position);
-        console.log(position.chunk);
         position.chunk.SetPixel(relPos, colour);
     }
     LoadSession(session) {
@@ -49,7 +47,6 @@ class Chunk {
         let cbuffer = Buffer.from([0x127, 0x127, 0x127]);
         let buffer = Buffer.alloc(main_1.config.chunk_size * main_1.config.chunk_size * 3);
         buffer.fill('\0');
-        console.log(buffer);
         if (this.loaded) {
         }
     }
@@ -78,26 +75,24 @@ class Chunk {
         }
         let cpos = new Point(cx, cy);
         let c = this.allCurrentChunks.find((value) => value.coordinates.equals(cpos));
-        console.log(c);
         if (c) {
             return c;
         }
-        console.log(c);
         c = new Chunk(cpos);
         this.allCurrentChunks.push(c);
-        console.log(c);
         return c;
     }
 }
 exports.Chunk = Chunk;
+// static members
+Chunk.allCurrentChunks = [];
 class Point {
     constructor(x, y) {
-        this.x = x;
-        this.y = y;
+        this.x = BigInt(x);
+        this.y = BigInt(y);
     }
     get chunk() {
         let c = Chunk.fromPoint(this);
-        console.log(c);
         return c;
     }
     equals(other) {
