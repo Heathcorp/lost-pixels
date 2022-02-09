@@ -2,20 +2,19 @@ const fs = require('fs')
 const path = require('path')
 
 import { Session } from './session'
-import { config } from './main'
+import { CONFIG } from './main'
 
 export class World {
-    loadedChunks: Set<Chunk>
-    activeSessions: Set<Session>
+    loadedChunks: Array<Chunk>
+    activeSessions: Array<Session>
 
     constructor(directory: string) {
-        this.loadedChunks = new Set<Chunk>();
-        this.activeSessions = new Set<Session>();
-
+        this.loadedChunks = []
+        this.activeSessions = []
     }
 
     SetPixel(position: Point, colour: string) {
-        const w = BigInt(config.chunk_size)
+        const w = BigInt(CONFIG.chunkSize)
         // convert position to relative chunk position
         let x = position.x % w
         let y = position.y % w
@@ -64,7 +63,7 @@ export class Chunk {
     {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
         let cbuffer = Buffer.from([0x127, 0x127, 0x127])
-        let buffer = Buffer.alloc(config.chunk_size * config.chunk_size * 3)
+        let buffer = Buffer.alloc(CONFIG.chunkSize * CONFIG.chunkSize * 3)
         buffer.fill('\0')
 
         if (this.loaded) {
@@ -92,7 +91,7 @@ export class Chunk {
     // static members
     static allCurrentChunks: Array<Chunk> = []
     static fromPoint(point: Point): Chunk {
-        const w = BigInt(config.chunk_size)
+        const w = BigInt(CONFIG.chunkSize)
         
         let cx = point.x / w
         let cy = point.y / w

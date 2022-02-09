@@ -4,6 +4,7 @@ import { ObjectFlags } from 'typescript';
 const JSONb = require('json-bigint')({useNativeBigInt: true});
 
 import { Area, Point, Chunk } from './world'
+import { CONFIG } from './main'
 
 export class Session {
     events: EventEmitter
