@@ -13,7 +13,7 @@ export class World {
         this.activeSessions = []
     }
 
-    SetPixel(position: Point, colour: string) {
+    setPixel(position: Point, colour: string) {
         const w = BigInt(CONFIG.chunkSize)
         // convert position to relative chunk position
         let x = position.x % w
@@ -23,7 +23,7 @@ export class World {
 
         const relPos = new Point(x, y)
 
-        position.chunk.SetPixel(relPos, colour)
+        position.chunk.setPixel(relPos, colour)
     }
 
     LoadSession(session: Session) {
@@ -36,7 +36,7 @@ export class World {
         })
 
         session.events.on('setpixel', (position: Point, colour: string) => {
-            this.SetPixel(position, colour)
+            this.setPixel(position, colour)
         })
     }
 }
@@ -59,7 +59,7 @@ export class Chunk {
         this.coordinates = chunkPos
     }
 
-    public SetPixel(position: Point, colour: string)
+    public setPixel(position: Point, colour: string)
     {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
         let cbuffer = Buffer.from([0x127, 0x127, 0x127])
@@ -108,11 +108,8 @@ export class Chunk {
         
         if (c) { return c }
         
-
         c = new Chunk(cpos)
         this.allCurrentChunks.push(c)
-        
-
         return c
     }
 }
@@ -138,19 +135,22 @@ export class Point {
 
 // defines a rectangular area of the canvas
 export class Area {
-    // @ts-ignore
     min: Point
-    // @ts-ignore
     max: Point
 
     constructor(a: Point, b: Point) {
-        this.Set(a, b)
+        this.min = new Point(0n, 0n)
+        this.max = new Point(0n, 0n)
+        this.set(a, b)
     }
 
-    Set(a: Point, b: Point) {
-        // maybe need some checks here but I think we can live without it for now
-        this.min = a
-        this.max = b
+    set(a: Point, b: Point) {
+        if (a.x < b.x && a.y < b.y) {
+            this.min.x = a.x
+            this.min.y = a.y
+            this.max.x = b.x
+            this.max.y = b.y
+        }
     }
 
     doesContain(point: Point): boolean {

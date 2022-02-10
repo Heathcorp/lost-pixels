@@ -35,7 +35,7 @@ export class Session {
                         break;
                     case 'setviewport':
                         if (isValid = i_setviewport(msg.data)) {
-                            this.area.Set(new Point(msg.data.a.x, msg.data.a.y), new Point(msg.data.b.x, msg.data.b.y))
+                            this.area.set(new Point(msg.data.a.x, msg.data.a.y), new Point(msg.data.b.x, msg.data.b.y))
                             this.events.emit('setviewport', msg.data)
                         }
                         break;
