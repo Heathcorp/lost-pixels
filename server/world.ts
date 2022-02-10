@@ -1,6 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
+import { EventEmitter } from 'events'
+
 import { Session } from './session'
 import { CONFIG } from './main'
 
@@ -32,7 +34,7 @@ export class World {
         })
         
         session.events.on('setviewport', () => {
-
+            
         })
 
         session.events.on('setpixel', (position: Point, colour: string) => {
@@ -135,22 +137,24 @@ export class Point {
 
 // defines a rectangular area of the canvas
 export class Area {
+    events: EventEmitter
+
     min: Point
     max: Point
 
     constructor(a: Point, b: Point) {
+        this.events = new EventEmitter()
+        
         this.min = new Point(0n, 0n)
         this.max = new Point(0n, 0n)
         this.set(a, b)
     }
 
     set(a: Point, b: Point) {
-        if (a.x < b.x && a.y < b.y) {
-            this.min.x = a.x
-            this.min.y = a.y
-            this.max.x = b.x
-            this.max.y = b.y
-        }
+        this.min.x = a.x
+        this.min.y = a.y
+        this.max.x = b.x
+        this.max.y = b.y
     }
 
     doesContain(point: Point): boolean {

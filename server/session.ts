@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
-import { ObjectFlags } from 'typescript';
+import { ObjectFlags } from 'typescript'
 
-const JSONb = require('json-bigint')({useNativeBigInt: true});
+const JSONb = require('json-bigint')({useNativeBigInt: true})
 
 import { Area, Point, Chunk } from './world'
 import { CONFIG } from './main'
@@ -31,12 +31,14 @@ export class Session {
             if (isValid = i_message(msg)) {
                 switch (msg.event) {
                     case 'setpixel':
-                        if (isValid = i_setpixel(msg.data)) { this.events.emit('setpixel', new Point(msg.data.position.x, msg.data.position.y), msg.data.colour) }
+                        if (isValid = i_setpixel(msg.data)) {
+                            this.events.emit('setpixel', new Point(msg.data.position.x, msg.data.position.y), msg.data.colour)
+                        }
                         break;
                     case 'setviewport':
                         if (isValid = i_setviewport(msg.data)) {
                             this.area.set(new Point(msg.data.a.x, msg.data.a.y), new Point(msg.data.b.x, msg.data.b.y))
-                            this.events.emit('setviewport', msg.data)
+                            this.events.emit('setviewport')
                         }
                         break;
                 }
