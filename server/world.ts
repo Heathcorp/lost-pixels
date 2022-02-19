@@ -1,5 +1,7 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import * as crypto from 'crypto'
+
 
 import { EventEmitter } from 'events'
 
@@ -85,15 +87,15 @@ export class Chunk {
 
         // not sure how to name the files just yet, tbd
         // temporarily borrowing from the old codebase's way of doing it
-        
-        const crypto = require('crypto');
-        
+                
         // chunk hash = sha256(sha256(x) concat sha256(y))
-        let xHash = crypto.createHash('sha256').update(this.coordinates.x.toString(16)).digest('hex');
-        let yHash = crypto.createHash('sha256').update(this.coordinates.y.toString(16)).digest('hex');
-        let hash = crypto.createHash('sha256').update(xHash + yHash).digest('hex');
+        let xs = this.coordinates.x.toString(16)
+        let ys = this.coordinates.y.toString(16)
+        let hash = crypto.createHash('sha1').update(xs + "," + ys).digest('hex');
 
-        return (this.fileName = hash)
+        let objPath = path.join(hash.substring(0, 3), hash.substring(3))
+
+        return (this.fileName = objPath)
     }
 
     public get imageData(): string {
