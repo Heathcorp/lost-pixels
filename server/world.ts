@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+import * as fs from 'fs'
+import * as path from 'path'
 
 import { EventEmitter } from 'events'
 
@@ -105,16 +105,16 @@ export class Chunk {
 
     private doesExist: boolean | undefined
     get exists(): boolean {
-        return this.doesExist || (this.doesExist = fs.existsFileSync(this.file))
+        return this.doesExist || (this.doesExist = fs.existsSync(this.file))
     }
 
     private loadFromFile() {
-        // temp
         this.loaded = true
+        this.buffer = fs.readFileSync(this.file)
     }
 
     private writeToFile() {
-        // temp
+        fs.writeFileSync(this.file, this.buffer)
     }
 
     // static members
