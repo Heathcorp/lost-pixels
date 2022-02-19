@@ -26,8 +26,8 @@ class Session {
                         break;
                     case 'setviewport':
                         if (isValid = i_setviewport(msg.data)) {
-                            this.area.Set(new world_1.Point(msg.data.a.x, msg.data.a.y), new world_1.Point(msg.data.b.x, msg.data.b.y));
-                            this.events.emit('setviewport', msg.data);
+                            this.area.set(new world_1.Point(msg.data.a.x, msg.data.a.y), new world_1.Point(msg.data.b.x, msg.data.b.y));
+                            this.events.emit('setviewport');
                         }
                         break;
                 }

@@ -44,38 +44,42 @@ export class World {
 }
 
 export class Chunk {
-    exists: boolean
     loaded: boolean
 
-    buffer: Buffer
+    private buffer: Buffer
 
     coordinates: Point
 
     private constructor(chunkPos: Point) {
-        this.exists = false
         this.loaded = false
-        this.fileName = ''
-
         this.buffer = Buffer.from('')
-        
+
         this.coordinates = chunkPos
     }
 
     public setPixel(position: Point, colour: string)
     {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
-        let cbuffer = Buffer.from([0x127, 0x127, 0x127])
-        let buffer = Buffer.alloc(CONFIG.chunkSize * CONFIG.chunkSize * 3)
-        buffer.fill('\0')
+        let cbuffer = Buffer.from([0x7f, 0x7f, 0x7f])
 
-        if (this.loaded) {
-            
+        const bufferIndex = Number(position.x + CONFIG.chunkSize * position.y)
+
+        if (this.exists) {
+            if (this.loaded) {
+                cbuffer.copy(this.buffer, bufferIndex)
+                // yet to write back to file, do that when chunk unloads
+            }
+        } else {
+            this.buffer = Buffer.alloc(CONFIG.chunkSize * CONFIG.chunkSize * 3, 0xff)
+            cbuffer.copy(this.buffer, bufferIndex)
+
+            this.writeToFile()
         }
     }
 
-    fileName: string
+    private fileName: string | undefined
     get file(): string {
-        if (this.fileName !== '') { return this.fileName }
+        if (this.fileName) { return this.fileName }
 
         // not sure how to name the files just yet, tbd
         // temporarily borrowing from the old codebase's way of doing it
@@ -88,6 +92,15 @@ export class Chunk {
         let hash = crypto.createHash('sha256').update(xHash + yHash).digest('hex');
 
         return (this.fileName = hash)
+    }
+
+    private doesExist: boolean | undefined
+    get exists(): boolean {
+        return this.doesExist || (this.doesExist = fs.existsFileSync(this.file))
+    }
+
+    private writeToFile() {
+        
     }
 
     // static members

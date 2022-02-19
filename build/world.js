@@ -3,14 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Area = exports.Point = exports.Chunk = exports.World = void 0;
 const fs = require('fs');
 const path = require('path');
+const events_1 = require("events");
 const main_1 = require("./main");
 class World {
     constructor(directory) {
-        this.loadedChunks = new Set();
-        this.activeSessions = new Set();
+        this.loadedChunks = [];
+        this.activeSessions = [];
     }
-    SetPixel(position, colour) {
-        const w = BigInt(main_1.config.chunk_size);
+    setPixel(position, colour) {
+        const w = BigInt(main_1.CONFIG.chunkSize);
         // convert position to relative chunk position
         let x = position.x % w;
         let y = position.y % w;
@@ -21,7 +22,7 @@ class World {
             y += w;
         }
         const relPos = new Point(x, y);
-        position.chunk.SetPixel(relPos, colour);
+        position.chunk.setPixel(relPos, colour);
     }
     LoadSession(session) {
         session.events.on('close', () => {
@@ -29,29 +30,27 @@ class World {
         session.events.on('setviewport', () => {
         });
         session.events.on('setpixel', (position, colour) => {
-            this.SetPixel(position, colour);
+            this.setPixel(position, colour);
         });
     }
 }
 exports.World = World;
 class Chunk {
     constructor(chunkPos) {
-        this.exists = false;
         this.loaded = false;
-        this.fileName = '';
         this.buffer = Buffer.from('');
         this.coordinates = chunkPos;
     }
-    SetPixel(position, colour) {
+    setPixel(position, colour) {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
         let cbuffer = Buffer.from([0x127, 0x127, 0x127]);
-        let buffer = Buffer.alloc(main_1.config.chunk_size * main_1.config.chunk_size * 3);
+        let buffer = Buffer.alloc(main_1.CONFIG.chunkSize * main_1.CONFIG.chunkSize * 3);
         buffer.fill('\0');
-        if (this.loaded) {
+        if (this.exists) {
         }
     }
     get file() {
-        if (this.fileName !== '') {
+        if (this.fileName) {
             return this.fileName;
         }
         // not sure how to name the files just yet, tbd
@@ -63,8 +62,11 @@ class Chunk {
         let hash = crypto.createHash('sha256').update(xHash + yHash).digest('hex');
         return (this.fileName = hash);
     }
+    get exists() {
+        return this.doesExist || (this.doesExist = fs.existsFileSync(this.file));
+    }
     static fromPoint(point) {
-        const w = BigInt(main_1.config.chunk_size);
+        const w = BigInt(main_1.CONFIG.chunkSize);
         let cx = point.x / w;
         let cy = point.y / w;
         if (point.x < 0n) {
@@ -103,12 +105,16 @@ exports.Point = Point;
 // defines a rectangular area of the canvas
 class Area {
     constructor(a, b) {
-        this.Set(a, b);
+        this.events = new events_1.EventEmitter();
+        this.min = new Point(0n, 0n);
+        this.max = new Point(0n, 0n);
+        this.set(a, b);
     }
-    Set(a, b) {
-        // maybe need some checks here but I think we can live without it for now
-        this.min = a;
-        this.max = b;
+    set(a, b) {
+        this.min.x = a.x;
+        this.min.y = a.y;
+        this.max.x = b.x;
+        this.max.y = b.y;
     }
     doesContain(point) {
         return (point.x >= this.min.x
