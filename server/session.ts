@@ -59,6 +59,16 @@ export class Session {
         this.socket.close(code)
         this.events.emit('close')
     }
+
+    sendChunk(chunk: Chunk) {
+        this.socket.send(<m_message>{
+            event: "chunk",
+            data: {
+                position: chunk.coordinates.toObject(),
+                image: chunk.imageData
+            }
+        })
+    }
 }
 
 // socket messages interfaces

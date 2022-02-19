@@ -60,20 +60,22 @@ export class Chunk {
     public setPixel(position: Point, colour: string)
     {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
-        let cbuffer = Buffer.from([0x7f, 0x7f, 0x7f])
+        let cbuffer = Buffer.from([0x7f, 0x7f, 0x7f]) // temporary
 
         const bufferIndex = Number(position.x + CONFIG.chunkSize * position.y)
 
         if (this.exists) {
-            if (this.loaded) {
-                cbuffer.copy(this.buffer, bufferIndex)
-                // yet to write back to file, do that when chunk unloads
+            if (!this.loaded) {
+                this.loadFromFile()
             }
+            cbuffer.copy(this.buffer, bufferIndex)
+            // yet to write back to file, do that when chunk unloads
         } else {
+            this.loaded = true
             this.buffer = Buffer.alloc(CONFIG.chunkSize * CONFIG.chunkSize * 3, 0xff)
             cbuffer.copy(this.buffer, bufferIndex)
-
-            this.writeToFile()
+            
+            this.writeToFile() // first write to file for this new chunk
         }
     }
 
@@ -94,13 +96,25 @@ export class Chunk {
         return (this.fileName = hash)
     }
 
+    public get imageData(): string {
+        if (!this.loaded) {
+            this.loadFromFile()
+        }
+        return this.buffer.toString("base64")
+    }
+
     private doesExist: boolean | undefined
     get exists(): boolean {
         return this.doesExist || (this.doesExist = fs.existsFileSync(this.file))
     }
 
+    private loadFromFile() {
+        // temp
+        this.loaded = true
+    }
+
     private writeToFile() {
-        
+        // temp
     }
 
     // static members
@@ -143,8 +157,15 @@ export class Point {
         return c
     }
 
-    equals(other: Point) {
+    equals(other: Point): boolean {
         return (other.x === this.x && other.y === this.y)
+    }
+
+    toObject(): object {
+        return {
+            x: this.x,
+            y: this.y
+        }
     }
 }
 
