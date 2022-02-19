@@ -83,11 +83,21 @@ interface m_setviewport {
 }
 
 // type guards:
+function i_event(evt: string): boolean {
+    return (evt !== null && evt !== undefined
+        && typeof evt === 'string'
+        && (evt === "setpixel"
+            || evt === "setviewport"
+            // || evt === "" // add more here as API grows
+        )
+    )
+}
+
 function i_message(msg: any): msg is m_message {
     return (Object.entries(msg).length === 2
-        && msg.event !== null && msg.event !== undefined
+        && i_event(msg.event)
         && msg.data !== null && msg.data !== undefined
-        && typeof msg.event === 'string' && typeof msg.data === 'object'
+        && typeof msg.data === 'object'
     )
 }
 
