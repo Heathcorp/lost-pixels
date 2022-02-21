@@ -85,10 +85,6 @@ export class Chunk {
     get file(): string {
         if (this.fileName) { return this.fileName }
 
-        // not sure how to name the files just yet, tbd
-        // temporarily borrowing from the old codebase's way of doing it
-                
-        // chunk hash = sha256(sha256(x) concat sha256(y))
         let xs = this.coordinates.x.toString(16)
         let ys = this.coordinates.y.toString(16)
         let hash = crypto.createHash('sha1').update(xs + "," + ys).digest('hex');
@@ -155,8 +151,7 @@ export class Point {
     }
 
     public get chunk(): Chunk {
-        let c = Chunk.fromPoint(this)
-        return c
+        return Chunk.fromPoint(this)
     }
 
     equals(other: Point): boolean {
@@ -199,5 +194,18 @@ export class Area {
             && point.y >= this.min.y
             && point.y <= this.max.y
         )
+    }
+
+    get chunks(): Array<Chunk> {
+        const arr: Array<Chunk> = []
+
+        const w = BigInt(CONFIG.chunkSize)
+        for (let x = this.min.x; x < this.max.x; x += w) {
+            for (let y = this.min.y; y < this.max.y; y += w) {
+                arr.push(new Point(x, y).chunk)
+            }
+        }
+
+        return arr
     }
 }
