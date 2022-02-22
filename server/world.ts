@@ -12,9 +12,11 @@ export class World {
     loadedChunks: Array<Chunk>
     activeSessions: Array<Session>
 
-    constructor(directory: string) {
+    constructor() {
         this.loadedChunks = []
         this.activeSessions = []
+
+        this.populateDirectories()
     }
 
     setPixel(position: Point, colour: string) {
@@ -43,6 +45,20 @@ export class World {
             this.setPixel(position, colour)
         })
     }
+
+    private populateDirectories() {
+        if (!fs.existsSync(CONFIG.worldPath)) {
+            fs.mkdirSync(CONFIG.worldPath)
+        }
+
+        const hex = "0123456789abcdef"
+        for (let i = 0; i < 256; i++) {
+            let p = path.join(CONFIG.worldPath, hex.charAt(Math.floor(i / 16)) + hex.charAt(i % 16))
+            if (!fs.existsSync(p)) {
+                fs.mkdir(p, () => null)
+            }
+        }
+    }
 }
 
 export class Chunk {
@@ -62,9 +78,12 @@ export class Chunk {
     public setPixel(position: Point, colour: string)
     {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
-        let cbuffer = Buffer.from([0x7f, 0x7f, 0x7f]) // temporary
+        let cbuffer = Buffer.alloc(3)
+        cbuffer[0] = parseInt(colour.substring(0, 2), 16)
+        cbuffer[1] = parseInt(colour.substring(2, 4), 16)
+        cbuffer[2] = parseInt(colour.substring(4, 6), 16)
 
-        const bufferIndex = Number(position.x + CONFIG.chunkSize * position.y)
+        const bufferIndex = Number(position.x) + CONFIG.chunkSize * Number(position.y)
 
         if (this.exists) {
             if (!this.loaded) {
@@ -89,7 +108,7 @@ export class Chunk {
         let ys = this.coordinates.y.toString(16)
         let hash = crypto.createHash('sha1').update(xs + "," + ys).digest('hex');
 
-        let objPath = path.join(hash.substring(0, 3), hash.substring(3))
+        let objPath = path.join(hash.substring(0, 2), hash.substring(2))
 
         return (this.fileName = objPath)
     }
@@ -108,11 +127,11 @@ export class Chunk {
 
     private loadFromFile() {
         this.loaded = true
-        this.buffer = fs.readFileSync(this.file)
+        this.buffer = fs.readFileSync(path.join(CONFIG.worldPath, this.file))
     }
 
     private writeToFile() {
-        fs.writeFileSync(this.file, this.buffer)
+        fs.writeFileSync(path.join(CONFIG.worldPath, this.file), this.buffer)
     }
 
     // static members

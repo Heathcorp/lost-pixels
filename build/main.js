@@ -13,7 +13,7 @@ const session_1 = require("./session");
 // serve all files in /public     (((((temporary}}}}}
 app.use(express.static('public'));
 app.listen(80);
-const world = new world_1.World(path.join(__dirname, exports.CONFIG.worldName));
+const world = new world_1.World();
 var sessionCount = 0;
 app.ws('/', (socket, req) => {
     // client connected

@@ -45,14 +45,31 @@ class Session {
         this.socket.close(code);
         this.events.emit('close');
     }
+    sendChunk(chunk) {
+        this.socket.send(JSONb.stringify({
+            event: "chunk",
+            data: {
+                position: chunk.coordinates.toObject(),
+                image: chunk.imageData
+            }
+        }));
+    }
 }
 exports.Session = Session;
 // type guards:
+function i_event(evt) {
+    return (evt !== null && evt !== undefined
+        && typeof evt === 'string'
+        && (evt === "setpixel"
+            || evt === "setviewport"
+        // || evt === "" // add more here as API grows
+        ));
+}
 function i_message(msg) {
     return (Object.entries(msg).length === 2
-        && msg.event !== null && msg.event !== undefined
+        && i_event(msg.event)
         && msg.data !== null && msg.data !== undefined
-        && typeof msg.event === 'string' && typeof msg.data === 'object');
+        && typeof msg.data === 'object');
 }
 function i_position(pos) {
     return (Object.entries(pos).length === 2

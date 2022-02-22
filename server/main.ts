@@ -16,7 +16,7 @@ app.use(express.static('public'))
 app.listen(80)
 
 
-const world = new World(path.join(__dirname, CONFIG.worldName))
+const world = new World()
 var sessionCount = 0
 
 app.ws('/', (socket: any, req: any) => {

@@ -1,14 +1,35 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Area = exports.Point = exports.Chunk = exports.World = void 0;
-const fs = require('fs');
-const path = require('path');
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const crypto = __importStar(require("crypto"));
 const events_1 = require("events");
 const main_1 = require("./main");
 class World {
-    constructor(directory) {
+    constructor() {
         this.loadedChunks = [];
         this.activeSessions = [];
+        this.populateDirectories();
     }
     setPixel(position, colour) {
         const w = BigInt(main_1.CONFIG.chunkSize);
@@ -33,6 +54,18 @@ class World {
             this.setPixel(position, colour);
         });
     }
+    populateDirectories() {
+        if (!fs.existsSync(main_1.CONFIG.worldPath)) {
+            fs.mkdirSync(main_1.CONFIG.worldPath);
+        }
+        const hex = "0123456789abcdef";
+        for (let i = 0; i < 256; i++) {
+            let p = path.join(main_1.CONFIG.worldPath, hex.charAt(Math.floor(i / 16)) + hex.charAt(i % 16));
+            if (!fs.existsSync(p)) {
+                fs.mkdir(p, () => null);
+            }
+        }
+    }
 }
 exports.World = World;
 class Chunk {
@@ -43,27 +76,50 @@ class Chunk {
     }
     setPixel(position, colour) {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
-        let cbuffer = Buffer.from([0x127, 0x127, 0x127]);
-        let buffer = Buffer.alloc(main_1.CONFIG.chunkSize * main_1.CONFIG.chunkSize * 3);
-        buffer.fill('\0');
+        let cbuffer = Buffer.alloc(3);
+        cbuffer[0] = parseInt(colour.substring(0, 2), 16);
+        cbuffer[1] = parseInt(colour.substring(2, 4), 16);
+        cbuffer[2] = parseInt(colour.substring(4, 6), 16);
+        const bufferIndex = Number(position.x) + main_1.CONFIG.chunkSize * Number(position.y);
         if (this.exists) {
+            if (!this.loaded) {
+                this.loadFromFile();
+            }
+            cbuffer.copy(this.buffer, bufferIndex);
+            // yet to write back to file, do that when chunk unloads
+        }
+        else {
+            this.loaded = true;
+            this.buffer = Buffer.alloc(main_1.CONFIG.chunkSize * main_1.CONFIG.chunkSize * 3, 0xff);
+            cbuffer.copy(this.buffer, bufferIndex);
+            this.writeToFile(); // first write to file for this new chunk
         }
     }
     get file() {
         if (this.fileName) {
             return this.fileName;
         }
-        // not sure how to name the files just yet, tbd
-        // temporarily borrowing from the old codebase's way of doing it
-        const crypto = require('crypto');
-        // chunk hash = sha256(sha256(x) concat sha256(y))
-        let xHash = crypto.createHash('sha256').update(this.coordinates.x.toString(16)).digest('hex');
-        let yHash = crypto.createHash('sha256').update(this.coordinates.y.toString(16)).digest('hex');
-        let hash = crypto.createHash('sha256').update(xHash + yHash).digest('hex');
-        return (this.fileName = hash);
+        let xs = this.coordinates.x.toString(16);
+        let ys = this.coordinates.y.toString(16);
+        let hash = crypto.createHash('sha1').update(xs + "," + ys).digest('hex');
+        let objPath = path.join(hash.substring(0, 2), hash.substring(2));
+        return (this.fileName = objPath);
+    }
+    get imageData() {
+        if (!this.loaded) {
+            this.loadFromFile();
+        }
+        return this.buffer.toString("base64");
     }
     get exists() {
-        return this.doesExist || (this.doesExist = fs.existsFileSync(this.file));
+        return this.doesExist || (this.doesExist = fs.existsSync(this.file));
+    }
+    loadFromFile() {
+        this.loaded = true;
+        this.buffer = fs.readFileSync(path.join(main_1.CONFIG.worldPath, this.file));
+    }
+    writeToFile() {
+        fs.writeFileSync(path.join(main_1.CONFIG.worldPath, this.file), this.buffer);
     }
     static fromPoint(point) {
         const w = BigInt(main_1.CONFIG.chunkSize);
@@ -94,11 +150,16 @@ class Point {
         this.y = BigInt(y);
     }
     get chunk() {
-        let c = Chunk.fromPoint(this);
-        return c;
+        return Chunk.fromPoint(this);
     }
     equals(other) {
         return (other.x === this.x && other.y === this.y);
+    }
+    toObject() {
+        return {
+            x: this.x,
+            y: this.y
+        };
     }
 }
 exports.Point = Point;
@@ -121,6 +182,16 @@ class Area {
             && point.x <= this.max.x
             && point.y >= this.min.y
             && point.y <= this.max.y);
+    }
+    get chunks() {
+        const arr = [];
+        const w = BigInt(main_1.CONFIG.chunkSize);
+        for (let x = this.min.x; x < this.max.x; x += w) {
+            for (let y = this.min.y; y < this.max.y; y += w) {
+                arr.push(new Point(x, y).chunk);
+            }
+        }
+        return arr;
     }
 }
 exports.Area = Area;
