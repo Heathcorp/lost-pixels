@@ -61,13 +61,15 @@ export class Session {
     }
 
     sendChunk(chunk: Chunk) {
-        this.socket.send(JSONb.stringify(<m_message>{
-            event: "chunk",
-            data: {
-                position: chunk.coordinates.toObject(),
-                image: chunk.imageData
-            }
-        }))
+        if (chunk.exists) {
+            this.socket.send(JSONb.stringify(<m_message>{
+                event: "chunk",
+                data: {
+                    position: chunk.coordinates.toObject(),
+                    image: chunk.imageData
+                }
+            }))
+        }
     }
 }
 

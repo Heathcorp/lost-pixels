@@ -38,7 +38,15 @@ export class World {
         })
         
         session.events.on('setviewport', () => {
+            let chunks = session.area.chunks;
             
+            for (let chunk of chunks) {
+                session.sendChunk(chunk);
+            }
+        })
+
+        session.events.on('moveviewport', () => {
+
         })
 
         session.events.on('setpixel', (position: Point, colour: string) => {
@@ -187,14 +195,10 @@ export class Point {
 
 // defines a rectangular area of the canvas
 export class Area {
-    events: EventEmitter
-
     min: Point
     max: Point
 
-    constructor(a: Point, b: Point) {
-        this.events = new EventEmitter()
-        
+    constructor(a: Point, b: Point) {        
         this.min = new Point(0n, 0n)
         this.max = new Point(0n, 0n)
         this.set(a, b)
@@ -205,6 +209,8 @@ export class Area {
         this.min.y = a.y
         this.max.x = b.x
         this.max.y = b.y
+
+        this.chunkCache = undefined;
     }
 
     doesContain(point: Point): boolean {
@@ -215,16 +221,18 @@ export class Area {
         )
     }
 
+    private chunkCache: Array<Chunk> | undefined;
     get chunks(): Array<Chunk> {
-        const arr: Array<Chunk> = []
+        if (this.chunkCache) return this.chunkCache;
+        this.chunkCache = []
 
         const w = BigInt(CONFIG.chunkSize)
         for (let x = this.min.x; x < this.max.x; x += w) {
             for (let y = this.min.y; y < this.max.y; y += w) {
-                arr.push(new Point(x, y).chunk)
+                this.chunkCache.push(new Point(x, y).chunk)
             }
         }
 
-        return arr
+        return this.chunkCache
     }
 }
