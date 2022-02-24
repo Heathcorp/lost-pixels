@@ -34,7 +34,9 @@ export class World {
 
     LoadSession(session: Session) {
         session.events.on('close', () => {
-
+            for (let chunk of session.area.chunks) {
+                chunk.removeClient(session);
+            }
         })
         
         session.events.on('setviewport', () => {

@@ -44,6 +44,9 @@ class World {
     }
     LoadSession(session) {
         session.events.on('close', () => {
+            for (let chunk of session.area.chunks) {
+                chunk.removeClient(session);
+            }
         });
         session.events.on('setviewport', () => {
             // obtain a copy of the chunks within the new user viewport
