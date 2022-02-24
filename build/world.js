@@ -23,7 +23,6 @@ exports.Area = exports.Point = exports.Chunk = exports.World = void 0;
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
 const crypto = __importStar(require("crypto"));
-const events_1 = require("events");
 const main_1 = require("./main");
 class World {
     constructor() {
@@ -36,12 +35,10 @@ class World {
         // convert position to relative chunk position
         let x = position.x % w;
         let y = position.y % w;
-        if (x < 0n) {
+        if (x < 0n)
             x += w;
-        }
-        if (y < 0n) {
+        if (y < 0n)
             y += w;
-        }
         const relPos = new Point(x, y);
         position.chunk.setPixel(relPos, colour);
     }
@@ -49,6 +46,22 @@ class World {
         session.events.on('close', () => {
         });
         session.events.on('setviewport', () => {
+            // obtain a copy of the chunks within the new user viewport
+            let chunks = new Set(session.area.chunks);
+            for (let prevChunk of session.loadedChunks) {
+                if (!chunks.has(prevChunk)) {
+                    // stop chunk from being loaded as it is outside of the new viewport
+                    prevChunk.removeClient(session);
+                }
+                else {
+                    // chunk already loaded, no need to send it again
+                    chunks.delete(prevChunk);
+                }
+            }
+            for (let chunk of chunks) {
+                session.sendChunk(chunk);
+                chunk.addClient(session);
+            }
         });
         session.events.on('setpixel', (position, colour) => {
             this.setPixel(position, colour);
@@ -70,6 +83,8 @@ class World {
 exports.World = World;
 class Chunk {
     constructor(chunkPos) {
+        // perhaps too memory-intensive, TODO: find a more efficient way of doing this
+        this.clients = new Set();
         this.loaded = false;
         this.buffer = Buffer.from('');
         this.coordinates = chunkPos;
@@ -94,6 +109,19 @@ class Chunk {
             cbuffer.copy(this.buffer, bufferIndex);
             this.writeToFile(); // first write to file for this new chunk
         }
+        this.updateClients();
+    }
+    // call this every time a pixel changes to update clients with the changes
+    updateClients() {
+        for (let client of this.clients) {
+            client.sendChunk(this);
+        }
+    }
+    addClient(client) {
+        this.clients.add(client);
+    }
+    removeClient(client) {
+        this.clients.delete(client);
     }
     get file() {
         if (this.fileName) {
@@ -166,9 +194,9 @@ exports.Point = Point;
 // defines a rectangular area of the canvas
 class Area {
     constructor(a, b) {
-        this.events = new events_1.EventEmitter();
         this.min = new Point(0n, 0n);
         this.max = new Point(0n, 0n);
+        this.chunkCache = new Set();
         this.set(a, b);
     }
     set(a, b) {
@@ -176,6 +204,7 @@ class Area {
         this.min.y = a.y;
         this.max.x = b.x;
         this.max.y = b.y;
+        this.chunkCache.clear();
     }
     doesContain(point) {
         return (point.x >= this.min.x
@@ -184,14 +213,15 @@ class Area {
             && point.y <= this.max.y);
     }
     get chunks() {
-        const arr = [];
+        if (this.chunkCache.size > 0)
+            return this.chunkCache;
         const w = BigInt(main_1.CONFIG.chunkSize);
         for (let x = this.min.x; x < this.max.x; x += w) {
             for (let y = this.min.y; y < this.max.y; y += w) {
-                arr.push(new Point(x, y).chunk);
+                this.chunkCache.add(new Point(x, y).chunk);
             }
         }
-        return arr;
+        return this.chunkCache;
     }
 }
 exports.Area = Area;

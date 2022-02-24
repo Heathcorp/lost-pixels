@@ -10,6 +10,7 @@ class Session {
         this.socket = socket;
         // temp
         this.area = new world_1.Area(new world_1.Point(0n, 0n), new world_1.Point(0n, 0n));
+        this.loadedChunks = new Set();
         this.addListeners();
     }
     addListeners() {
@@ -46,13 +47,15 @@ class Session {
         this.events.emit('close');
     }
     sendChunk(chunk) {
-        this.socket.send(JSONb.stringify({
-            event: "chunk",
-            data: {
-                position: chunk.coordinates.toObject(),
-                image: chunk.imageData
-            }
-        }));
+        if (chunk.exists) {
+            this.socket.send(JSONb.stringify({
+                event: "chunk",
+                data: {
+                    position: chunk.coordinates.toObject(),
+                    image: chunk.imageData
+                }
+            }));
+        }
     }
 }
 exports.Session = Session;

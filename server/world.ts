@@ -38,11 +38,16 @@ export class World {
         })
         
         session.events.on('setviewport', () => {
-            let chunks = session.area.chunks;
+            // obtain a copy of the chunks within the new user viewport
+            let chunks = new Set(session.area.chunks);
 
             for (let prevChunk of session.loadedChunks) {
-                if (!chunks.includes(prevChunk)) {
+                if (!chunks.has(prevChunk)) {
+                    // stop chunk from being loaded as it is outside of the new viewport
                     prevChunk.removeClient(session);
+                } else {
+                    // chunk already loaded, no need to send it again
+                    chunks.delete(prevChunk);
                 }
             }
             
@@ -223,18 +228,21 @@ export class Area {
     max: Point
 
     constructor(a: Point, b: Point) {        
-        this.min = new Point(0n, 0n)
-        this.max = new Point(0n, 0n)
-        this.set(a, b)
+        this.min = new Point(0n, 0n);
+        this.max = new Point(0n, 0n);
+
+        this.chunkCache = new Set<Chunk>();
+
+        this.set(a, b);
     }
 
     set(a: Point, b: Point) {
-        this.min.x = a.x
-        this.min.y = a.y
-        this.max.x = b.x
-        this.max.y = b.y
+        this.min.x = a.x;
+        this.min.y = a.y;
+        this.max.x = b.x;
+        this.max.y = b.y;
 
-        this.chunkCache = undefined;
+        this.chunkCache.clear();
     }
 
     doesContain(point: Point): boolean {
@@ -242,21 +250,20 @@ export class Area {
             && point.x <= this.max.x
             && point.y >= this.min.y
             && point.y <= this.max.y
-        )
+        );
     }
 
-    private chunkCache: Array<Chunk> | undefined;
-    get chunks(): Array<Chunk> {
-        if (this.chunkCache) return this.chunkCache;
-        this.chunkCache = []
+    private chunkCache: Set<Chunk>
+    get chunks(): Set<Chunk> {
+        if (this.chunkCache.size > 0) return this.chunkCache;
 
-        const w = BigInt(CONFIG.chunkSize)
+        const w = BigInt(CONFIG.chunkSize);
         for (let x = this.min.x; x < this.max.x; x += w) {
             for (let y = this.min.y; y < this.max.y; y += w) {
-                this.chunkCache.push(new Point(x, y).chunk)
+                this.chunkCache.add(new Point(x, y).chunk);
             }
         }
 
-        return this.chunkCache
+        return this.chunkCache;
     }
 }
