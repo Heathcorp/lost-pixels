@@ -13,23 +13,23 @@ export class World {
     activeSessions: Array<Session>
 
     constructor() {
-        this.loadedChunks = []
-        this.activeSessions = []
+        this.loadedChunks = [];
+        this.activeSessions = [];
 
-        this.populateDirectories()
+        this.populateDirectories();
     }
 
     setPixel(position: Point, colour: string) {
-        const w = BigInt(CONFIG.chunkSize)
+        const w = BigInt(CONFIG.chunkSize);
         // convert position to relative chunk position
-        let x = position.x % w
-        let y = position.y % w
-        if (x < 0n) { x += w }
-        if (y < 0n) { y += w }
+        let x = position.x % w;
+        let y = position.y % w;
+        if (x < 0n) x += w;
+        if (y < 0n) y += w;
 
-        const relPos = new Point(x, y)
+        const relPos = new Point(x, y);
 
-        position.chunk.setPixel(relPos, colour)
+        position.chunk.setPixel(relPos, colour);
     }
 
     LoadSession(session: Session) {
@@ -42,6 +42,7 @@ export class World {
             
             for (let chunk of chunks) {
                 session.sendChunk(chunk);
+                chunk.addClient(session);
             }
         })
 
@@ -56,14 +57,14 @@ export class World {
 
     private populateDirectories() {
         if (!fs.existsSync(CONFIG.worldPath)) {
-            fs.mkdirSync(CONFIG.worldPath)
+            fs.mkdirSync(CONFIG.worldPath);
         }
 
         const hex = "0123456789abcdef"
         for (let i = 0; i < 256; i++) {
-            let p = path.join(CONFIG.worldPath, hex.charAt(Math.floor(i / 16)) + hex.charAt(i % 16))
+            let p = path.join(CONFIG.worldPath, hex.charAt(Math.floor(i / 16)) + hex.charAt(i % 16));
             if (!fs.existsSync(p)) {
-                fs.mkdir(p, () => null)
+                fs.mkdir(p, () => null);
             }
         }
     }
@@ -71,12 +72,16 @@ export class World {
 
 export class Chunk {
     loaded: boolean
+    private clients: Set<Session>
 
     private buffer: Buffer
 
     coordinates: Point
 
     private constructor(chunkPos: Point) {
+        // perhaps too memory-intensive, TODO: find a more efficient way of doing this
+        this.clients = new Set<Session>()
+
         this.loaded = false
         this.buffer = Buffer.from('')
 
@@ -106,6 +111,23 @@ export class Chunk {
             
             this.writeToFile() // first write to file for this new chunk
         }
+
+        this.updateClients()
+    }
+
+    // call this every time a pixel changes to update clients with the changes
+    private updateClients() {
+        for (let client of this.clients) {
+            client.sendChunk(this)
+        }
+    }
+    
+    public addClient(client: Session) {
+        this.clients.add(client)
+    }
+
+    public removeClient(client: Session) {
+        this.clients.delete(client)
     }
 
     private fileName: string | undefined
