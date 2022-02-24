@@ -12,19 +12,23 @@ export class Session {
 
     area: Area
 
+    loadedChunks: Set<Chunk>
+
     constructor(socket: any) {
-        this.events = new EventEmitter()
-        this.socket = socket
+        this.events = new EventEmitter();
+        this.socket = socket;
 
         // temp
-        this.area = new Area(new Point(0n, 0n), new Point(0n, 0n))
+        this.area = new Area(new Point(0n, 0n), new Point(0n, 0n));
 
-        this.addListeners()
+        this.loadedChunks = new Set<Chunk>();
+
+        this.addListeners();
     }
 
     private addListeners() {
         this.socket.on('message', (msg: any) => {
-            msg = <m_message>JSONb.parse(msg)
+            msg = <m_message>JSONb.parse(msg);
             
             // if isValid trips false at any point here then the client gets disconnected
             let isValid: boolean = false
@@ -32,13 +36,13 @@ export class Session {
                 switch (msg.event) {
                     case 'setpixel':
                         if (isValid = i_setpixel(msg.data)) {
-                            this.events.emit('setpixel', new Point(msg.data.position.x, msg.data.position.y), msg.data.colour)
+                            this.events.emit('setpixel', new Point(msg.data.position.x, msg.data.position.y), msg.data.colour);
                         }
                         break;
                     case 'setviewport':
                         if (isValid = i_setviewport(msg.data)) {
-                            this.area.set(new Point(msg.data.a.x, msg.data.a.y), new Point(msg.data.b.x, msg.data.b.y))
-                            this.events.emit('setviewport')
+                            this.area.set(new Point(msg.data.a.x, msg.data.a.y), new Point(msg.data.b.x, msg.data.b.y));
+                            this.events.emit('setviewport');
                         }
                         break;
                 }
@@ -46,18 +50,18 @@ export class Session {
 
             if (!isValid) {
                 // client sent bad message, possibly malicious, disconnect them
-                this.closeSession(1003)
+                this.closeSession(1003);
             }
         })
 
         this.socket.on('close', () => {
-            this.events.emit('close')
+            this.events.emit('close');
         })
     }
 
     closeSession(code: Number) {
-        this.socket.close(code)
-        this.events.emit('close')
+        this.socket.close(code);
+        this.events.emit('close');
     }
 
     sendChunk(chunk: Chunk) {

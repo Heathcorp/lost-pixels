@@ -39,15 +39,17 @@ export class World {
         
         session.events.on('setviewport', () => {
             let chunks = session.area.chunks;
+
+            for (let prevChunk of session.loadedChunks) {
+                if (!chunks.includes(prevChunk)) {
+                    prevChunk.removeClient(session);
+                }
+            }
             
             for (let chunk of chunks) {
                 session.sendChunk(chunk);
                 chunk.addClient(session);
             }
-        })
-
-        session.events.on('moveviewport', () => {
-
         })
 
         session.events.on('setpixel', (position: Point, colour: string) => {
