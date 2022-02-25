@@ -100,28 +100,29 @@ export class Chunk {
     public setPixel(position: Point, colour: string)
     {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
-        let cbuffer = Buffer.alloc(3)
-        cbuffer[0] = parseInt(colour.substring(0, 2), 16)
-        cbuffer[1] = parseInt(colour.substring(2, 4), 16)
-        cbuffer[2] = parseInt(colour.substring(4, 6), 16)
+        let cbuffer = Buffer.alloc(3);
+        cbuffer[0] = parseInt(colour.substring(0, 2), 16);
+        cbuffer[1] = parseInt(colour.substring(2, 4), 16);
+        cbuffer[2] = parseInt(colour.substring(4, 6), 16);
 
-        const bufferIndex = Number(position.x) + CONFIG.chunkSize * Number(position.y)
+        const bufferIndex = 3 * (Number(position.x) + CONFIG.chunkSize * Number(position.y));
 
         if (this.exists) {
             if (!this.loaded) {
-                this.loadFromFile()
+                this.loadFromFile();
             }
-            cbuffer.copy(this.buffer, bufferIndex)
+            cbuffer.copy(this.buffer, bufferIndex);
             // yet to write back to file, do that when chunk unloads
         } else {
-            this.loaded = true
-            this.buffer = Buffer.alloc(CONFIG.chunkSize * CONFIG.chunkSize * 3, 0xff)
-            cbuffer.copy(this.buffer, bufferIndex)
+            this.loaded = true;
+            this.doesExist = true;
+            this.buffer = Buffer.alloc(CONFIG.chunkSize * CONFIG.chunkSize * 3, 0xff);
+            cbuffer.copy(this.buffer, bufferIndex);
             
-            this.writeToFile() // first write to file for this new chunk
+            this.writeToFile(); // first write to file for this new chunk
         }
 
-        this.updateClients()
+        this.updateClients();
     }
 
     // call this every time a pixel changes to update clients with the changes

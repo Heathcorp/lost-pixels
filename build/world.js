@@ -98,7 +98,7 @@ class Chunk {
         cbuffer[0] = parseInt(colour.substring(0, 2), 16);
         cbuffer[1] = parseInt(colour.substring(2, 4), 16);
         cbuffer[2] = parseInt(colour.substring(4, 6), 16);
-        const bufferIndex = Number(position.x) + main_1.CONFIG.chunkSize * Number(position.y);
+        const bufferIndex = 3 * (Number(position.x) + main_1.CONFIG.chunkSize * Number(position.y));
         if (this.exists) {
             if (!this.loaded) {
                 this.loadFromFile();
@@ -108,6 +108,7 @@ class Chunk {
         }
         else {
             this.loaded = true;
+            this.doesExist = true;
             this.buffer = Buffer.alloc(main_1.CONFIG.chunkSize * main_1.CONFIG.chunkSize * 3, 0xff);
             cbuffer.copy(this.buffer, bufferIndex);
             this.writeToFile(); // first write to file for this new chunk

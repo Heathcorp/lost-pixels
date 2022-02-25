@@ -95,8 +95,8 @@ socket.onopen = (event) => {
     
         // call different functions depending on event header from server
         switch(msg.event) {
-            case "loadchunk":
-                viewport.DisplayChunk(data.chunk, data.image);
+            case "chunk":
+                viewport.DisplayChunk(data.position, data.image);
                 break;
             case "unloadchunk":
                 viewport.DeleteChunk(data.chunk);
@@ -113,6 +113,11 @@ socket.onopen = (event) => {
     };
 };
 
+
+// temp hack fix to make client work with V2 server
+const chunkSize = 64;
+const chunkSizen = 64n;
+
 // class to keep track of a chunk and its sprite
 class Chunk {
     constructor(x, y, sprite, viewport) {
@@ -121,8 +126,8 @@ class Chunk {
         this.sprite = sprite;
 
         this.worldPos = {
-            x: this.x * 16n,
-            y: this.y * 16n
+            x: this.x * chunkSizen,
+            y: this.y * chunkSizen
         }
 
         this.UpdateSpritePos(viewport);
@@ -169,6 +174,9 @@ class Viewport {
             } else {
                 hex = brushData.primary;
             }
+            // hack fix to work with V2 server
+            return hex.substring(1);
+
             ret.r = parseInt(hex.substring(1, 3), 16);
             ret.g = parseInt(hex.substring(3, 5), 16);
             ret.b = parseInt(hex.substring(5, 7), 16);
@@ -183,16 +191,16 @@ class Viewport {
 
         // initialise the viewport and send to the server
         this.SetViewport();
-        socket.send(JSONb.stringify({
+        let sendVal = JSONb.stringify({
             event: "setviewport",
-            data: {
-                viewport: this.viewport
-            }
-        }));
+            data: this.viewport
+        })
+        // console.log(sendVal);
+        socket.send(sendVal);
 
         // create PIXI.js application
         this.app = new PIXI.Application({
-            backgroundColor: 0xffffff,
+            backgroundColor: 0xffdddd,
             width: window.innerWidth,
             height: window.innerHeight,
             view: document.getElementById('viewport-canvas')
@@ -253,13 +261,15 @@ class Viewport {
         // places a pixel and records that the mouse is pressed
         this.displayContainer.on('mousedown', (e) => {
             this.mouseLeftDown = true;
-            this.socket.send(JSONb.stringify({
+            let sendVal = JSONb.stringify({
                 event: "setpixel", 
                 data: {
                     position: this.PixelToWorld({x: e.data.global.x, y: e.data.global.y}), 
                     colour: this.brushColour()
                 }
-            }));
+            })
+            // console.log(sendVal)
+            this.socket.send(sendVal);
         });
 
         // event for when the mouse moves over the canvas
@@ -281,13 +291,15 @@ class Viewport {
                 let last = this.worldPixelsToDraw.at(-1);
                 let n = this.PixelToWorld({x: e.data.global.x, y: e.data.global.y});
                 if (!last || n.x != last.x || n.y != last.y) {
-                    this.socket.send(JSONb.stringify({
+                    let sendVal = JSONb.stringify({
                         event: "setpixel", 
                         data: {
                             position: n, 
                             colour: this.brushColour()
                         }
-                    }));
+                    })
+                    // console.log(sendVal);
+                    this.socket.send(sendVal);
                     //this.worldPixelsToDraw.push(n);
                 }
             }
@@ -336,7 +348,7 @@ class Viewport {
         // create new sprite from image data buffer
         let buffer = Buffer.from(image, 'base64');
         let sprite = PIXI.Sprite.from(
-            PIXI.Texture.fromBuffer(buffer, 16, 16, {
+            PIXI.Texture.fromBuffer(buffer, chunkSize, chunkSize, {
                 format:PIXI.FORMATS.RGB,
                 mipmap:PIXI.MIPMAP_MODES.OFF
             })
@@ -410,12 +422,12 @@ class Viewport {
     // originally in SetViewport but moved to avoid excessive sending of viewports to server
     // so you can move around the viewport without loading and unloading all the chunks
     UpdateViewport() {
-        socket.send(JSONb.stringify({
-            event: "moveviewport",
-            data: {
-                viewport: this.viewport
-            }
-        }));
+        let sendVal = JSONb.stringify({
+            event: "setviewport",
+            data: this.viewport
+        })
+        // console.log(sendVal);
+        socket.send(sendVal);
     }
 
     // helpful function to convert from pixel space to world space
