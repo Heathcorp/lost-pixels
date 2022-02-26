@@ -155,8 +155,8 @@ class Chunk {
             this.loaded = true;
             if (this.legacyChunks.length > 0) {
                 this.buffer = legacy.loadFromFile(this);
-                // this.writeToFile();
-                // legacy.deleteLegacyChunks(this);
+                this.writeToFile();
+                legacy.deleteLegacyChunks(this);
             }
             else {
                 this.buffer = fs.readFileSync(path.join(main_1.CONFIG.worldPath, this.file));
