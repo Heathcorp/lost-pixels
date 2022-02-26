@@ -146,9 +146,11 @@ class Chunk {
         return this.buffer.toString("base64");
     }
     get exists() {
+        let legacyCheck = legacy.doesChunkExist(this);
+        let newCheck = fs.existsSync(path.join(main_1.CONFIG.worldPath, this.file));
         return (this.doesExist
-            || (this.doesExist = legacy.doesChunkExist(this))
-            || (this.doesExist = fs.existsSync(this.file)));
+            || (this.doesExist = legacyCheck)
+            || (this.doesExist = newCheck));
     }
     loadFromFile() {
         if (this.exists) {

@@ -169,9 +169,11 @@ export class Chunk {
 
     private doesExist: boolean | undefined
     get exists(): boolean {
+        let legacyCheck = legacy.doesChunkExist(this);
+        let newCheck = fs.existsSync(path.join(CONFIG.worldPath, this.file));
         return (this.doesExist
-            || (this.doesExist = legacy.doesChunkExist(this))
-            || (this.doesExist = fs.existsSync(this.file))
+            || (this.doesExist = legacyCheck)
+            || (this.doesExist = newCheck)
         )
     }
 
