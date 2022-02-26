@@ -64,7 +64,7 @@ function loadFromFile(chunk) {
 exports.loadFromFile = loadFromFile;
 function deleteLegacyChunks(chunk) {
     chunk.legacyChunks.map((ch) => {
-        fs.rmSync(path.join(main_1.CONFIG.legacy.worldPath, ch.hash));
+        fs.unlinkSync(path.join(main_1.CONFIG.legacy.worldPath, ch.hash));
     });
     chunk.legacyChunks = [];
 }

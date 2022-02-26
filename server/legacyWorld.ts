@@ -53,7 +53,7 @@ export function loadFromFile(chunk: Chunk): Buffer {
 
 export function deleteLegacyChunks(chunk: Chunk) {
     chunk.legacyChunks.map((ch) => {
-        fs.rmSync(path.join(CONFIG.legacy.worldPath, ch.hash))
+        fs.unlinkSync(path.join(CONFIG.legacy.worldPath, ch.hash))
     })
     chunk.legacyChunks = [];
 }
