@@ -79,7 +79,12 @@ export class World {
     }
 }
 
+import * as legacy from './legacyWorld'
+
 export class Chunk {
+    // legacy support
+    legacyChunks: Array<legacy.legacyChunk>
+
     loaded: boolean
     private clients: Set<Session>
 
@@ -89,12 +94,14 @@ export class Chunk {
 
     private constructor(chunkPos: Point) {
         // perhaps too memory-intensive, TODO: find a more efficient way of doing this
-        this.clients = new Set<Session>()
+        this.clients = new Set<Session>();
 
-        this.loaded = false
-        this.buffer = Buffer.from('')
+        this.loaded = false;
+        this.buffer = Buffer.from('');
 
-        this.coordinates = chunkPos
+        this.coordinates = chunkPos;
+
+        this.legacyChunks = [];
     }
 
     public setPixel(position: Point, colour: string)
@@ -162,12 +169,23 @@ export class Chunk {
 
     private doesExist: boolean | undefined
     get exists(): boolean {
-        return this.doesExist || (this.doesExist = fs.existsSync(this.file))
+        return (this.doesExist
+            || (this.doesExist = legacy.doesChunkExist(this))
+            || (this.doesExist = fs.existsSync(this.file))
+        )
     }
 
     private loadFromFile() {
-        this.loaded = true
-        this.buffer = fs.readFileSync(path.join(CONFIG.worldPath, this.file))
+        if (this.exists) {
+            this.loaded = true
+            if (this.legacyChunks.length > 0) {
+                this.buffer = legacy.loadFromFile(this);
+                this.writeToFile();
+                legacy.deleteLegacyChunks(this);
+            } else {
+                this.buffer = fs.readFileSync(path.join(CONFIG.worldPath, this.file));
+            }
+        }
     }
 
     private writeToFile() {
