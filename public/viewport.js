@@ -1,7 +1,7 @@
 const JSONb = require('json-bigint')({useNativeBigInt: true});
 const { Buffer } = require('buffer');
 
-const socket = new WebSocket('ws://192.168.0.55');
+const socket = new WebSocket('ws://lostpixels.org');
 
 // copied from stack overflow
 const rgb2hex = (rgb) => `#${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`;
@@ -200,7 +200,7 @@ class Viewport {
 
         // create PIXI.js application
         this.app = new PIXI.Application({
-            backgroundColor: 0xf0000f,
+            backgroundColor: 0xffffff,
             width: window.innerWidth,
             height: window.innerHeight,
             view: document.getElementById('viewport-canvas')
