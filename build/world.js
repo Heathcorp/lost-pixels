@@ -84,6 +84,7 @@ class World {
     }
 }
 exports.World = World;
+const legacy = __importStar(require("./legacyWorld"));
 class Chunk {
     constructor(chunkPos) {
         // perhaps too memory-intensive, TODO: find a more efficient way of doing this
@@ -91,6 +92,7 @@ class Chunk {
         this.loaded = false;
         this.buffer = Buffer.from('');
         this.coordinates = chunkPos;
+        this.legacyChunks = [];
     }
     setPixel(position, colour) {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
@@ -144,11 +146,22 @@ class Chunk {
         return this.buffer.toString("base64");
     }
     get exists() {
-        return this.doesExist || (this.doesExist = fs.existsSync(this.file));
+        return (this.doesExist
+            || (this.doesExist = legacy.doesChunkExist(this))
+            || (this.doesExist = fs.existsSync(this.file)));
     }
     loadFromFile() {
-        this.loaded = true;
-        this.buffer = fs.readFileSync(path.join(main_1.CONFIG.worldPath, this.file));
+        if (this.exists) {
+            this.loaded = true;
+            if (this.legacyChunks.length > 0) {
+                this.buffer = legacy.loadFromFile(this);
+                // this.writeToFile();
+                // legacy.deleteLegacyChunks(this);
+            }
+            else {
+                this.buffer = fs.readFileSync(path.join(main_1.CONFIG.worldPath, this.file));
+            }
+        }
     }
     writeToFile() {
         fs.writeFileSync(path.join(main_1.CONFIG.worldPath, this.file), this.buffer);
