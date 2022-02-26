@@ -200,7 +200,7 @@ class Viewport {
 
         // create PIXI.js application
         this.app = new PIXI.Application({
-            backgroundColor: 0xffdddd,
+            backgroundColor: 0xffffff,
             width: window.innerWidth,
             height: window.innerHeight,
             view: document.getElementById('viewport-canvas')
