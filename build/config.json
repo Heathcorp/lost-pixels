@@ -1,0 +1,6 @@
+{
+    "worldPath" : "./test_world_1",
+    "maxViewDistance" : 512,
+    "maxSessions" : 100,
+    "chunkSize" : 64
+}
