@@ -260,8 +260,8 @@ class Area {
         if (this.chunkCache.size > 0)
             return this.chunkCache;
         const w = BigInt(main_1.CONFIG.chunkSize);
-        for (let x = this.min.x; x < this.max.x; x += w) {
-            for (let y = this.min.y; y < this.max.y; y += w) {
+        for (let x = this.min.x; x < this.max.x + w; x += w) {
+            for (let y = this.min.y; y < this.max.y + w; y += w) {
                 this.chunkCache.add(new Point(x, y).chunk);
             }
         }
