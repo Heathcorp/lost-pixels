@@ -194,6 +194,8 @@ export class Chunk {
 
     private doesExist: boolean | undefined
     get exists(): boolean {
+        // temporary until legacy migration is complete
+        if (this.doesExist) return true;
         let legacyCheck = legacy.doesChunkExist(this);
         let newCheck = fs.existsSync(path.join(CONFIG.worldPath, this.file));
         return (this.doesExist

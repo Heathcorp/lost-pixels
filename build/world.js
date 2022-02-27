@@ -171,6 +171,9 @@ class Chunk {
         return this.buffer.toString("base64");
     }
     get exists() {
+        // temporary until legacy migration is complete
+        if (this.doesExist)
+            return true;
         let legacyCheck = legacy.doesChunkExist(this);
         let newCheck = fs.existsSync(path.join(main_1.CONFIG.worldPath, this.file));
         return (this.doesExist
