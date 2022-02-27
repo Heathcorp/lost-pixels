@@ -26,9 +26,8 @@ const crypto = __importStar(require("crypto"));
 const main_1 = require("./main");
 class World {
     constructor() {
-        this.loadedChunks = [];
-        this.activeSessions = [];
         this.populateDirectories();
+        this.startIdleChunkSaving();
     }
     setPixel(position, colour) {
         const w = BigInt(main_1.CONFIG.chunkSize);
@@ -82,6 +81,17 @@ class World {
             }
         }
     }
+    startIdleChunkSaving() {
+        // semi-randomly save chunks just in case people don't ever leave the website and the server closes unexpectedly
+        let i = 0;
+        setInterval(() => {
+            if (Chunk.allCurrentChunks.length > 0) {
+                i = i % Chunk.allCurrentChunks.length;
+                Chunk.allCurrentChunks[i].save();
+                i++;
+            }
+        }, 100);
+    }
 }
 exports.World = World;
 const legacy = __importStar(require("./legacyWorld"));
@@ -128,6 +138,21 @@ class Chunk {
     }
     removeClient(client) {
         this.clients.delete(client);
+        if (this.clients.size === 0) {
+            this.unload();
+        }
+    }
+    unload() {
+        if (this.loaded) {
+            this.writeToFile();
+            this.loaded = false;
+            this.buffer = Buffer.from('');
+        }
+    }
+    save() {
+        if (this.loaded && this.exists) {
+            this.writeToFile();
+        }
     }
     get file() {
         if (this.fileName) {

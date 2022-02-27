@@ -9,14 +9,10 @@ import { Session } from './session'
 import { CONFIG } from './main'
 
 export class World {
-    loadedChunks: Array<Chunk>
-    activeSessions: Array<Session>
 
     constructor() {
-        this.loadedChunks = [];
-        this.activeSessions = [];
-
         this.populateDirectories();
+        this.startIdleChunkSaving();
     }
 
     setPixel(position: Point, colour: string) {
@@ -76,6 +72,18 @@ export class World {
                 fs.mkdir(p, () => null);
             }
         }
+    }
+
+    private startIdleChunkSaving() {
+        // semi-randomly save chunks just in case people don't ever leave the website and the server closes unexpectedly
+        let i = 0;
+        setInterval(() => {
+            if (Chunk.allCurrentChunks.length > 0) {
+                i = i % Chunk.allCurrentChunks.length;
+                Chunk.allCurrentChunks[i].save();
+                i++;
+            }
+        }, 100);
     }
 }
 
@@ -145,6 +153,23 @@ export class Chunk {
 
     public removeClient(client: Session) {
         this.clients.delete(client)
+        if (this.clients.size === 0) {
+            this.unload();
+        }
+    }
+
+    private unload() {
+        if (this.loaded) {
+            this.writeToFile();
+            this.loaded = false;
+            this.buffer = Buffer.from('');
+        }
+    }
+
+    public save() {
+        if (this.loaded && this.exists) {
+            this.writeToFile();
+        }
     }
 
     private fileName: string | undefined
