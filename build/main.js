@@ -31,7 +31,7 @@ const world_1 = require("./world");
 const session_1 = require("./session");
 // serve all files in /public     (((((temporary}}}}}
 app.use(express.static('public'));
-app.listen(80);
+app.listen(3000);
 const world = new world_1.World();
 var sessionCount = 0;
 app.ws('/', (socket, req) => {
