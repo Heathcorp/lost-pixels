@@ -110,6 +110,8 @@ export class Chunk {
         this.coordinates = chunkPos;
 
         this.legacyChunks = [];
+
+        this.batchingChanges = false;
     }
 
     public setPixel(position: Point, colour: string)
@@ -140,10 +142,20 @@ export class Chunk {
         this.updateClients();
     }
 
+    private batchingChanges: boolean
     // call this every time a pixel changes to update clients with the changes
     private updateClients() {
-        for (let client of this.clients) {
-            client.sendChunk(this)
+        // kind of like a mutex
+        if (!this.batchingChanges) {
+            this.batchingChanges = true;
+
+            // wait a bit before sending the changes to the clients
+            setTimeout(() => {
+                for (let client of this.clients) {
+                    client.sendChunk(this);
+                }
+                this.batchingChanges = false;
+            }, 100);
         }
     }
     

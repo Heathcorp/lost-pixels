@@ -103,6 +103,7 @@ class Chunk {
         this.buffer = Buffer.from('');
         this.coordinates = chunkPos;
         this.legacyChunks = [];
+        this.batchingChanges = false;
     }
     setPixel(position, colour) {
         // convert string into r g b components, here we can safely assume colour is a valid 6 digit hex rgb colour
@@ -129,8 +130,16 @@ class Chunk {
     }
     // call this every time a pixel changes to update clients with the changes
     updateClients() {
-        for (let client of this.clients) {
-            client.sendChunk(this);
+        // kind of like a mutex
+        if (!this.batchingChanges) {
+            this.batchingChanges = true;
+            // wait a bit before sending the changes to the clients
+            setTimeout(() => {
+                for (let client of this.clients) {
+                    client.sendChunk(this);
+                }
+                this.batchingChanges = false;
+            }, 100);
         }
     }
     addClient(client) {
