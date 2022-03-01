@@ -341,6 +341,12 @@ class Viewport {
             this.mouseRightDown = false;
             this.UpdateViewport();
         });
+
+        // mouse leaves canvas therefore assume it isn't held down anymore
+        this.displayContainer.on('mouseout', (e) => {
+            this.mouseLeftDown = false;
+            this.mouseRightDown = false;
+        })
     }
 
     // creates a new chunk object based on data received from the server
