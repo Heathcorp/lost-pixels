@@ -11,8 +11,8 @@ require('express-ws')(app);
 import { World } from './world'
 import { Session } from './session'
 
-// serve all files in /public     (((((temporary}}}}}
-app.use(express.static('public'));
+// serve all files in ./build/client (((((temporary}}}}}
+app.use(express.static('build/client'));
 app.listen(3000);
 
 
