@@ -1,25 +1,90 @@
+/* Text styles: */
+
 .default_text {
   font-size: 1rem;
   font-weight: 400;
-  color: black;
+  margin: 0px;
+  color: var(--text-0);
 }
 
 .title {
   font-size: 3rem;
   font-weight: 600;
+  color: var(--text-0);
+  text-shadow: 0.1rem 0.1rem var(--text-1);
 }
 
-.heading1 {
+.heading-1 {
   font-size: 2rem;
   font-weight: 500;
+  color: var(--text-0);
 }
 
-.heading2 {
+.heading-2 {
   font-size: 1.7rem;
   font-weight: 500;
+  color: var(--text-0);
 }
 
-.heading3 {
+.heading-3 {
   font-size: 1.4rem;
   font-weight: 500;
+  color: var(--text-2);
+}
+
+.body {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-0);
+}
+
+.note {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--text-2);
+}
+
+/* Box styles: */
+
+.box-0 {
+  position: relative;
+  padding: 0.5rem;
+  margin: 0.25rem 0.5rem 0.5rem 0.25rem;
+  background-color: var(--background-0);
+  border: 0.25rem solid var(--border-0);
+  box-shadow: 0.5rem 0.5rem var(--shadow-0);
+}
+
+.box-1 {
+  position: relative;
+  padding: 0.5rem;
+  background-color: var(--background-1);
+  border: 0.25rem solid var(--border-1);
+  box-shadow: 0.5rem 0.5rem var(--shadow-1);
+}
+
+.box-2 {
+  position: relative;
+  padding: 0.5rem;
+  background-color: var(--background-2);
+  border: 0.25rem solid var(--border-2);
+  box-shadow: 0.5rem 0.5rem var(--shadow-2);
+}
+
+.button-0:hover {
+  top: 0.25rem;
+  left: 0.25rem;
+  box-shadow: 0.25rem 0.25rem var(--shadow-0);
+}
+
+.button-1:hover {
+  top: 0.25rem;
+  left: 0.25rem;
+  box-shadow: 0.25rem 0.25rem var(--shadow-1);
+}
+
+.button-2:hover {
+  top: 0.25rem;
+  left: 0.25rem;
+  box-shadow: 0.25rem 0.25rem var(--shadow-2);
 }

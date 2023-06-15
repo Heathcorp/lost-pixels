@@ -2,24 +2,22 @@ import { Component, mergeProps, JSX } from 'solid-js';
 
 import './common.css';
 
-const Text: Component<{
-  value?: string;
+const Box: Component<{
   children?: JSX.Element;
   class?: string;
   style?: JSX.CSSProperties;
 }> = (props) => {
-  const defaults = { class: 'default_text' };
+  const defaults = { class: 'box-0' };
   const merged = mergeProps(defaults, props);
 
   return (
-    <p
+    <div
       classList={{ [defaults.class]: true, [merged.class]: true }}
       style={props.style}
     >
-      {props.value}
       {props.children}
-    </p>
+    </div>
   );
 };
 
-export default Text;
+export default Box;
