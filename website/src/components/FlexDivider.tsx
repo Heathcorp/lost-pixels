@@ -7,7 +7,12 @@ const FlexDivider: Component<{ type?: number; style?: JSX.CSSProperties }> = (
 ) => {
   const defaults = { type: 0 };
   const merged = mergeProps(defaults, props);
-  return <div class={`flexDivider-${merged.type}`} style={merged.style} />;
+  return (
+    <div
+      class={`flexDivider flexDivider-${merged.type}`}
+      style={merged.style}
+    />
+  );
 };
 
 export default FlexDivider;

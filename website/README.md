@@ -1,34 +1,49 @@
+# lostpixels.org
+
+## Blurb
+
+Lost pixels is a collection of web-based experiments. Think of it as a digital, online gallery.
+
+## Requirements (TODO)
+
+1. Home page displaying navigation and the experiments list
+2. About screen with announcements blog, changelogs, blurbs, links to github etc, contact details
+3. Search function on home page
+4. Filters and sorting options
+5. Experiment viewport info page
+6. Fullscreen experiment iframe page with navigation back to home
+7. https
+8.
+9. Donation links
+10. Night mode/themes
+11. Filtering for external experiments
+12. API for external experiments?
+13.
+14.
+15. Marketing
+
+### Minimum experiments
+
+1. The Button (with embeddable iframe api)
+2.
+3.
+4.
+5.
+6. The Canvas (the original lost pixels idea)
+
+### Experiment ideas
+
+1. Anarchy git repo website
+2. The Canvas but with turing machines
+
+### Third-party experiments?
+
+1. Oroboria?
+2.
+3.
+
 ## Usage
-
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
-
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
-
-```bash
-$ npm install # or pnpm install or yarn install
-```
-
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
-
-## Available Scripts
-
-In the project directory, you can run:
 
 ### `npm run dev` or `npm start`
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-
 ### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
