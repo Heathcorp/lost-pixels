@@ -1,11 +1,12 @@
-import { Component, createSignal, onCleanup } from 'solid-js';
-import type { JSX } from 'solid-js';
+import { Component, createSignal, mergeProps, onCleanup } from 'solid-js';
 import Text from './Text';
 
-const FONTS = ['Arvo'];
+const FONTS = ['Arvo', 'Verdana'];
 
-const LogoType: Component = () => {
-  const [font, setFont] = createSignal<string>('Arvo');
+const LogoType: Component<{ text?: string }> = (props) => {
+  const defaults = { text: 'lostpixels.org' };
+  const merged = mergeProps(defaults, props);
+  const [font, setFont] = createSignal<string>(FONTS[0]);
 
   // const timer = setInterval(() =>{
   //   const index = Math.floor(FONTS.length * Math.random());
@@ -15,11 +16,7 @@ const LogoType: Component = () => {
   // onCleanup(() => clearInterval(timer));
 
   return (
-    <Text
-      value="lostpixels.org"
-      class="title"
-      style={{ 'font-family': font() }}
-    />
+    <Text value={merged.text} class="title" style={{ 'font-family': font() }} />
   );
 };
 

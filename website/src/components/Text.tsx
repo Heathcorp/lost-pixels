@@ -7,6 +7,7 @@ const Text: Component<{
   children?: JSX.Element;
   class?: string;
   style?: JSX.CSSProperties;
+  disabled?: boolean;
 }> = (props) => {
   const defaults = { class: 'default_text' };
   const merged = mergeProps(defaults, props);
@@ -15,6 +16,7 @@ const Text: Component<{
     <p
       classList={{ [defaults.class]: true, [merged.class]: true }}
       style={props.style}
+      disabled={props.disabled}
     >
       {props.value}
       {props.children}
