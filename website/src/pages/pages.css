@@ -17,11 +17,3 @@
   gap: 0.5rem;
   padding: 1rem;
 }
-
-.experimentCard {
-  position: relative;
-  display: flex;
-
-  justify-content: flex-start;
-  align-items: stretch;
-}

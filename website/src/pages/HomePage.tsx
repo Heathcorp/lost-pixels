@@ -6,6 +6,7 @@ import Box from '../components/Box';
 
 import './pages.css';
 import FlexDivider from '../components/FlexDivider';
+import ExperimentCard from '../components/ExperimentCard';
 
 const HomePage: Component = () => {
   return (
@@ -67,15 +68,7 @@ const HomePage: Component = () => {
             452, 54, 45, 54, 45, 65756,
           ]}
         >
-          {(item, index) => (
-            <Box class="experimentCard button-0">
-              {index}
-              {item % 5 && <br />} {item % 4 && <br />}
-              {item % 2 && <br />}
-              {item % 3 && <br />}
-              {item}
-            </Box>
-          )}
+          {(item, index) => <ExperimentCard />}
         </For>
       </div>
     </div>

@@ -5,13 +5,14 @@ import './fonts.css';
 import './index.css';
 
 import HomePage from './pages/HomePage';
+import ExperimentPage from './pages/ExperimentPage';
 
 const App: Component = () => {
   return (
     <Router>
       <Routes>
-        <Route path={['/', '/home']} component={HomePage} />
-        {/* <Route path="/home"/> */}
+        <Route path={['/', '/*']} component={HomePage} />
+        <Route path="/experiment/:experimentId?" component={ExperimentPage} />
         {/* <Route path="/home"/> */}
       </Routes>
     </Router>

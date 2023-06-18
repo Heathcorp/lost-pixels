@@ -101,3 +101,19 @@
   left: 0.25rem;
   box-shadow: 0.25rem 0.25rem var(--shadow-2);
 }
+
+.no-shadow {
+  box-shadow: none;
+  margin: 0px;
+}
+
+.square {
+  aspect-ratio: 1/1;
+}
+
+.image-default {
+  position: relative;
+  object-fit: cover;
+  max-width: 100%;
+  min-height: 100%;
+}
