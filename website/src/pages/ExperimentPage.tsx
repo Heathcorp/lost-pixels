@@ -27,7 +27,22 @@ const ExperimentPage: Component = (props) => {
           <LogoType />
         </Box>
       </div>
-      <div>content</div>
+      <div style={{ padding: '0.25rem' }}>
+        <Box style={{ padding: '1rem' }}>
+          <Box class="box-1 no-shadow no-padding">
+            <iframe
+              src="localhost:3000/home"
+              style={{
+                position: 'relative',
+                width: '100%',
+                height: '500px',
+                margin: '0px',
+                border: 'none',
+              }}
+            />
+          </Box>
+        </Box>
+      </div>
     </div>
   );
 };

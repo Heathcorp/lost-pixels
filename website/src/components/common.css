@@ -107,6 +107,10 @@
   margin: 0px;
 }
 
+.no-padding {
+  padding: 0px;
+}
+
 .square {
   aspect-ratio: 1/1;
 }
