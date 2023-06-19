@@ -14,10 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-          with:
-            node-version: 18
-            cache: 'npm'
-            cache-dependency-path: website/package-lock.json
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: website/package-lock.json
       - run: cd website && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
