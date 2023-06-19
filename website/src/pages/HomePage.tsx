@@ -7,22 +7,7 @@ import Box from '../components/Box';
 import './pages.css';
 import FlexDivider from '../components/FlexDivider';
 import ExperimentCard from '../components/ExperimentCard';
-
-const EXPERIMENTS_LIST: {
-  id: string;
-  name: string;
-  caption: string;
-  url: string;
-  image_path: string;
-}[] = [
-  {
-    id: 'thebutton',
-    name: 'The Button',
-    caption: 'Have you pressed the button?',
-    url: 'https://www.bing.com/search?q=helo',
-    image_path: 'https://meshgradient.com/gallery/9.png',
-  },
-];
+import { EXPERIMENTS_LIST } from '../constants';
 
 const HomePage: Component = () => {
   return (

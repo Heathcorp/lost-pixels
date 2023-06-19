@@ -7,12 +7,20 @@ import './index.css';
 import HomePage from './pages/HomePage';
 import ExperimentPage from './pages/ExperimentPage';
 
+import { EXPERIMENTS_LIST } from './constants';
+
 const App: Component = () => {
   return (
     <Router>
       <Routes>
         <Route path={['/', '/*']} component={HomePage} />
-        <Route path="/experiment/:experimentId?" component={ExperimentPage} />
+        <Route
+          path="/experiment/:experimentId?"
+          component={ExperimentPage}
+          data={({ params }) =>
+            EXPERIMENTS_LIST.find((e) => e.id === params.experimentId)
+          }
+        />
         {/* <Route path="/home"/> */}
       </Routes>
     </Router>

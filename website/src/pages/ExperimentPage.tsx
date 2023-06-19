@@ -1,17 +1,19 @@
 import { Component } from 'solid-js';
-import { useParams, useNavigate } from '@solidjs/router';
+import { useParams, useNavigate, useRouteData } from '@solidjs/router';
+
+import type { ExperimentData } from '../constants';
 
 import './pages.css';
 import LogoType from '../components/LogoType';
 import Box from '../components/Box';
-import FlexDivider from '../components/FlexDivider';
-import Text from '../components/Text';
 
-const ExperimentPage: Component = (props) => {
-  const params = useParams<{ experimentId: string }>();
+const ExperimentPage: Component = () => {
   const navigate = useNavigate();
+  const data = useRouteData<ExperimentData>();
 
-  if (!params.experimentId) navigate('/home');
+  const goHome = () => navigate('/home');
+
+  if (!data) goHome();
 
   return (
     <div class="pageContainer">
@@ -23,8 +25,8 @@ const ExperimentPage: Component = (props) => {
           padding: '0.25rem',
         }}
       >
-        <Box>
-          <LogoType />
+        <Box class="box-0">
+          <LogoType class="clickable" onClick={goHome} />
         </Box>
       </div>
       <div
@@ -40,7 +42,7 @@ const ExperimentPage: Component = (props) => {
         <Box style={{ padding: '1rem', flex: 1 }}>
           <Box class="box-1 no-shadow no-padding" style={{ flex: 1 }}>
             <iframe
-              src="https://bing.com"
+              src={data.url}
               style={{
                 display: 'block',
                 position: 'relative',
