@@ -1,0 +1,24 @@
+.pageContainer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: var(--background-3);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.homePageContentContainer {
+  position: relative;
+  width: 75%;
+
+  align-self: center;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  padding: 1rem;
+}

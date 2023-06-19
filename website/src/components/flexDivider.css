@@ -1,0 +1,19 @@
+.flexDivider {
+  align-self: stretch;
+  box-sizing: border-box;
+}
+
+.flexDivider-0 {
+  border-left: 0.25rem solid var(--border-0);
+  border-top: 0.25rem solid var(--border-0);
+}
+
+.flexDivider-1 {
+  border-left: 0.25rem solid var(--border-1);
+  border-top: 0.25rem solid var(--border-1);
+}
+
+.flexDivider-2 {
+  border-left: 0.25rem solid var(--border-2);
+  border-top: 0.25rem solid var(--border-2);
+}

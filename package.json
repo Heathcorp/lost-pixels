@@ -1,16 +1,14 @@
 {
-  "dependencies": {
-    "browserify": "^17.0.0",
-    "crypto": "^1.0.1",
-    "express": "^4.17.1",
-    "express-ws": "^5.0.2",
-    "fs": "^0.0.1-security",
-    "json-bigint": "^1.0.0",
-    "path": "^0.12.7",
-    "typescript": "^4.5.5",
-    "ws": "^8.3.0"
+  "name": "lost-pixels",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "@types/node": "^17.0.12"
+    "firebase-tools": "^12.4.0"
   }
 }

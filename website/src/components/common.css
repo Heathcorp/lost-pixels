@@ -1,0 +1,123 @@
+/* Text styles: */
+
+.default_text {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0px;
+  color: var(--text-0);
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--text-0);
+  text-shadow: 0.1rem 0.1rem var(--text-1);
+}
+
+.heading-1 {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text-0);
+}
+
+.heading-2 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-0);
+}
+
+.heading-3 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--text-1);
+}
+
+.body {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-0);
+}
+
+.note {
+  font-size: 0.8rem;
+  font-weight: 300;
+  color: var(--text-1);
+}
+
+.clickable {
+  text-decoration: 0.125rem underline var(--text-1);
+}
+
+.disabled {
+  text-decoration: 0.125rem line-through var(--accent-bad);
+}
+
+.clickable:not(.disabled):hover {
+  color: var(--text-1);
+  cursor: pointer;
+}
+
+/* Box styles: */
+
+.box-0 {
+  position: relative;
+  padding: 0.5rem;
+  margin: 0rem 0.5rem 0.5rem 0rem;
+  background-color: var(--background-0);
+  border: 0.25rem solid var(--border-0);
+  box-shadow: 0.5rem 0.5rem var(--shadow-0);
+}
+
+.box-1 {
+  position: relative;
+  padding: 0.5rem;
+  background-color: var(--background-1);
+  border: 0.25rem solid var(--border-1);
+  box-shadow: 0.5rem 0.5rem var(--shadow-1);
+}
+
+.box-2 {
+  position: relative;
+  padding: 0.5rem;
+  background-color: var(--background-2);
+  border: 0.25rem solid var(--border-2);
+  box-shadow: 0.5rem 0.5rem var(--shadow-2);
+}
+
+.button-0:hover {
+  top: 0.25rem;
+  left: 0.25rem;
+  box-shadow: 0.25rem 0.25rem var(--shadow-0);
+}
+
+.button-1:hover {
+  top: 0.25rem;
+  left: 0.25rem;
+  box-shadow: 0.25rem 0.25rem var(--shadow-1);
+}
+
+.button-2:hover {
+  top: 0.25rem;
+  left: 0.25rem;
+  box-shadow: 0.25rem 0.25rem var(--shadow-2);
+}
+
+.no-shadow {
+  box-shadow: none;
+  margin: 0px;
+}
+
+.no-padding {
+  padding: 0px;
+}
+
+.square {
+  aspect-ratio: 1/1;
+}
+
+.image-default {
+  position: relative;
+  object-fit: cover;
+  max-width: 100%;
+  min-height: 100%;
+}
