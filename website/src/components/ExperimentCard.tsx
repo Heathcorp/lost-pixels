@@ -4,7 +4,13 @@ import { useNavigate } from '@solidjs/router';
 import Text from '../components/Text';
 import Box from '../components/Box';
 
-const ExperimentCard: Component = () => {
+const ExperimentCard: Component<{
+  id: string;
+  name: string;
+  caption: string;
+  url: string;
+  image_path: string;
+}> = (props) => {
   const navigate = useNavigate();
 
   return (
@@ -21,17 +27,14 @@ const ExperimentCard: Component = () => {
       onClick={() => navigate(`experiment/${'thebutton'}`)}
     >
       {/* Title */}
-      <Text value="The Button" class="heading-1" />
+      <Text value={props.name} class="heading-1" />
       {/* Thumbnail */}
       <Box class="box-1 no-shadow square" style={{ padding: '0px' }}>
-        <img
-          src="https://meshgradient.com/gallery/9.png"
-          class="image-default"
-        />
+        <img src={props.image_path} class="image-default" />
       </Box>
       {/* Buttons? */}
       {/* Description */}
-      <Text>Have you pressed the button?</Text>
+      <Text>{props.caption}</Text>
     </Box>
   );
 };

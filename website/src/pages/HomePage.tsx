@@ -8,10 +8,26 @@ import './pages.css';
 import FlexDivider from '../components/FlexDivider';
 import ExperimentCard from '../components/ExperimentCard';
 
+const EXPERIMENTS_LIST: {
+  id: string;
+  name: string;
+  caption: string;
+  url: string;
+  image_path: string;
+}[] = [
+  {
+    id: 'thebutton',
+    name: 'The Button',
+    caption: 'Have you pressed the button?',
+    url: 'thebutton.lostpixels.org',
+    image_path: 'https://meshgradient.com/gallery/9.png',
+  },
+];
+
 const HomePage: Component = () => {
   return (
     <div
-      class="homePageContainer"
+      class="pageContainer"
       style={{
         display: 'flex',
         'flex-direction': 'column',
@@ -50,25 +66,8 @@ const HomePage: Component = () => {
       </div>
       {/* Content */}
       <div class="homePageContentContainer">
-        <For
-          each={[
-            1, 2, 3, 4, 6, 78, 80, 5, 6, 8, 45, 6, 45, 6, 345, 864, 5345, 4562,
-            54, 5, 452, 54, 45, 54, 45, 6587, 2, 3, 4, 6, 78, 80, 5, 6, 8, 45,
-            6, 45, 6, 345, 864, 5345, 4562, 54, 5, 452, 54, 45, 54, 45, 5, 2, 3,
-            4, 6, 78, 80, 5, 6, 8, 45, 6, 45, 6, 345, 864, 5345, 4562, 54, 5,
-            452, 54, 45, 54, 45, 65756, 1, 2, 3, 4, 6, 78, 80, 5, 6, 8, 45, 6,
-            45, 6, 345, 864, 5345, 4562, 54, 5, 452, 54, 45, 54, 45, 6587, 2, 3,
-            4, 6, 78, 80, 5, 6, 8, 45, 6, 45, 6, 345, 864, 5345, 4562, 54, 5,
-            452, 54, 45, 54, 45, 5675676, 2, 3, 4, 6, 78, 80, 5, 6, 8, 45, 6,
-            45, 6, 345, 864, 5345, 4562, 54, 5, 452, 54, 45, 54, 45, 65756, 1,
-            2, 3, 4, 6, 78, 80, 5, 6, 8, 45, 6, 45, 6, 345, 864, 5345, 4562, 54,
-            5, 452, 54, 45, 54, 45, 6587, 2, 3, 4, 6, 78, 80, 5, 6, 8, 45, 6,
-            45, 6, 345, 864, 5345, 4562, 54, 5, 452, 54, 45, 54, 45, 5675676, 2,
-            3, 4, 6, 78, 80, 5, 6, 8, 45, 6, 45, 6, 345, 864, 5345, 4562, 54, 5,
-            452, 54, 45, 54, 45, 65756,
-          ]}
-        >
-          {(item, index) => <ExperimentCard />}
+        <For each={EXPERIMENTS_LIST}>
+          {(item) => <ExperimentCard {...item} />}
         </For>
       </div>
     </div>
