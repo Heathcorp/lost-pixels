@@ -18,9 +18,8 @@ jobs:
           node-version: 18
           cache: "npm"
           cache-dependency-path: website/package-lock.json
-      - run: cd website
-      - run: npm install
-      - run: npm run build
+      - run: cd website && npm install
+      - run: cd website && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
