@@ -27,17 +27,26 @@ const ExperimentPage: Component = (props) => {
           <LogoType />
         </Box>
       </div>
-      <div style={{ padding: '0.25rem' }}>
-        <Box style={{ padding: '1rem' }}>
-          <Box class="box-1 no-shadow no-padding">
+      <div
+        style={{
+          display: 'flex',
+          'flex-direction': 'column',
+          'justify-content': 'flex-start',
+          'align-items': 'stretch',
+          padding: '0.25rem',
+          flex: 1,
+        }}
+      >
+        <Box style={{ padding: '1rem', flex: 1 }}>
+          <Box class="box-1 no-shadow no-padding" style={{ flex: 1 }}>
             <iframe
-              src="localhost:3000/home"
+              src="https://bing.com"
               style={{
+                display: 'block',
                 position: 'relative',
-                width: '100%',
-                height: '500px',
                 margin: '0px',
                 border: 'none',
+                flex: 1,
               }}
             />
           </Box>
