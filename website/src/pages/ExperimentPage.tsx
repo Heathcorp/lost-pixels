@@ -17,14 +17,7 @@ const ExperimentPage: Component = () => {
 
   return (
     <div class="pageContainer">
-      <div
-        style={{
-          display: 'flex',
-          'flex-direction': 'row',
-          gap: '0.25rem',
-          padding: '0.25rem',
-        }}
-      >
+      <div class="pageRowContainer">
         <Box class="box-0">
           <LogoType class="clickable" onClick={goHome} />
         </Box>

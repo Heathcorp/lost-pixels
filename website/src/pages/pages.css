@@ -10,6 +10,13 @@
   align-items: stretch;
 }
 
+.pageRowContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 0.25rem;
+  padding: 0.25rem;
+}
+
 .homePageContentContainer {
   position: relative;
   width: 75%;
@@ -21,4 +28,16 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
   padding: 1rem;
+}
+
+.aboutPageContentContainer {
+  position: relative;
+
+  width: 75%;
+  align-self: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
 }

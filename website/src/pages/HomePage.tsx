@@ -8,27 +8,14 @@ import './pages.css';
 import FlexDivider from '../components/FlexDivider';
 import ExperimentCard from '../components/ExperimentCard';
 import { EXPERIMENTS_LIST } from '../constants';
+import { useNavigate } from '@solidjs/router';
 
 const HomePage: Component = () => {
+  const navigate = useNavigate();
   return (
-    <div
-      class="pageContainer"
-      style={{
-        display: 'flex',
-        'flex-direction': 'column',
-        'justify-content': 'start',
-        'align-items': 'stretch',
-      }}
-    >
+    <div class="pageContainer">
       {/* Header bar */}
-      <div
-        style={{
-          display: 'flex',
-          'flex-direction': 'row',
-          gap: '0.25rem',
-          padding: '0.25rem',
-        }}
-      >
+      <div class="pageRowContainer">
         <Box>
           <LogoType />
         </Box>
@@ -42,7 +29,11 @@ const HomePage: Component = () => {
             gap: '0.25rem',
           }}
         >
-          <Text class="clickable heading-1" value="About" />
+          <Text
+            class="clickable heading-1"
+            value="About"
+            onClick={() => navigate('/about')}
+          />
           <FlexDivider />
           <Text class="clickable disabled heading-1" value="Random" />
           <FlexDivider />
