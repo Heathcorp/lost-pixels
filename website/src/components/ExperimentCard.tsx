@@ -23,6 +23,7 @@ const ExperimentCard: Component<{
         'align-items': 'stretch',
         padding: '1rem',
         gap: '0.5rem',
+        'max-width': '16rem',
       }}
       onClick={() => navigate(`experiment/${'thebutton'}`)}
     >

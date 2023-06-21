@@ -15,7 +15,7 @@ const AboutPage: Component = (props) => {
         </Box>
       </div>
       <div class="aboutPageContentContainer">
-        <Box class="box-1" style={{ height: '500px', padding: '5rem' }}>
+        <Box class="box-1" style={{ padding: '5rem' }}>
           <Text>
             {/* TODO: move to constants */}
             Lost Pixels (.org) is a website intended to bring the old web back

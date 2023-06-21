@@ -20,7 +20,7 @@ The only requirements for an experiment to make it onto lost pixels is that it i
 10. Night mode/themes
 11. Filtering for external experiments
 12. Submission form for external experiments
-13.
+13. Mobile support/responsiveness
 14.
 15. Marketing
 

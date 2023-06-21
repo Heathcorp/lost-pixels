@@ -45,6 +45,17 @@ const HomePage: Component = () => {
         <For each={EXPERIMENTS_LIST}>
           {(item) => <ExperimentCard {...item} />}
         </For>
+        {/* dummy card to show users that it is a list */}
+        <div class="box-0 dummyCard">
+          <Text
+            class="heading-3"
+            value="Coming Soon..."
+            style={{ position: 'relative', left: '0.5rem' }}
+          />
+          <a class="note clickable" href="mailto:info@lostpixels.org">
+            Want to help out?
+          </a>
+        </div>
       </div>
     </div>
   );
