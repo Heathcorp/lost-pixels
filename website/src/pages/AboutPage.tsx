@@ -22,9 +22,10 @@ const AboutPage: Component = (props) => {
             to life.
             <br />
             <br />
-            The experiments hosted on this site are intended to be collaborative
-            in nature and anonymous, providing the sense of disconnected
-            community that the old web provided.
+            Think of this as a digital, online art gallery, where the art pieces
+            are web-enabled experiments. The experiments hosted on this site are
+            intended to be collaborative in nature and anonymous, providing the
+            sense of disconnected community that the old web provided.
             <br />
             <br />
             What is "the old web"?
