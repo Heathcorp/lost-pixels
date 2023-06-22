@@ -4,6 +4,8 @@ import { useNavigate } from '@solidjs/router';
 import Text from '../components/Text';
 import Box from '../components/Box';
 
+import '../pages/pages.css';
+
 const ExperimentCard: Component<{
   id: string;
   name: string;
@@ -15,16 +17,7 @@ const ExperimentCard: Component<{
 
   return (
     <Box
-      class="button-0"
-      style={{
-        display: 'flex',
-        'flex-direction': 'column',
-        'justify-content': 'flex-start',
-        'align-items': 'stretch',
-        padding: '1rem',
-        gap: '0.5rem',
-        'max-width': '16rem',
-      }}
+      class="button-0 experimentCard"
       onClick={() => navigate(`experiment/${'thebutton'}`)}
     >
       {/* Title */}

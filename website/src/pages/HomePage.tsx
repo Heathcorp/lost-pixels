@@ -46,7 +46,7 @@ const HomePage: Component = () => {
           {(item) => <ExperimentCard {...item} />}
         </For>
         {/* dummy card to show users that it is a list */}
-        <div class="box-0 dummyCard">
+        <div class="box-0 experimentCard dummyCard">
           <Text
             class="heading-3"
             value="Coming Soon..."

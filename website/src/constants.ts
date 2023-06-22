@@ -11,7 +11,7 @@ export const EXPERIMENTS_LIST: ExperimentData[] = [
     id: 'thebutton',
     name: 'The Button',
     caption: 'Have you pressed the button?',
-    url: 'https://www.bing.com/search?q=helo',
+    url: 'https://thebutton.lostpixels.org',
     image_path: 'https://meshgradient.com/gallery/9.png',
   },
 ];

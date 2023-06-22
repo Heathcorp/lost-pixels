@@ -88,18 +88,21 @@
   top: 0.25rem;
   left: 0.25rem;
   box-shadow: 0.25rem 0.25rem var(--shadow-0);
+  cursor: pointer;
 }
 
 .button-1:hover {
   top: 0.25rem;
   left: 0.25rem;
   box-shadow: 0.25rem 0.25rem var(--shadow-1);
+  cursor: pointer;
 }
 
 .button-2:hover {
   top: 0.25rem;
   left: 0.25rem;
   box-shadow: 0.25rem 0.25rem var(--shadow-2);
+  cursor: pointer;
 }
 
 .no-shadow {
