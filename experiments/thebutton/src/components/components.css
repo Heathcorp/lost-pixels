@@ -1,0 +1,35 @@
+.mainLogo {
+  font-family: 'Press Start 2P';
+  font-size: 2rem;
+
+  color: var(--text-0);
+  padding: 0.5rem;
+  text-align: center;
+
+  border: 0.25rem solid var(--border-0);
+
+  /* text-shadow: 0.125rem 0.125rem var(--glow-0); */
+}
+
+.theButton {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background-1);
+  padding: 1rem;
+
+  border: 0.5rem outset;
+  /* box-sizing: border-box; */
+  /* box-shadow: 0.125rem 0.125rem var(--glow-0), -0.125rem -0.125rem var(--glow-1); */
+}
+
+.theButton:hover {
+  cursor: pointer;
+  opacity: 0.9;
+}
+
+.theButton:active {
+  border: 0.5rem ridge;
+  background-color: var(--background-1);
+}
