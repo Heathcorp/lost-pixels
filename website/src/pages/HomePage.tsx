@@ -24,7 +24,7 @@ const HomePage: Component = () => {
             flex: 1,
             display: 'flex',
             'flex-direction': 'row',
-            'justify-content': 'space-around',
+            'justify-content': 'space-evenly',
             'align-items': 'center',
             gap: '0.25rem',
           }}
