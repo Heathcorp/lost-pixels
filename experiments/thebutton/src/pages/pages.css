@@ -11,7 +11,9 @@
 }
 
 .contentContainer {
+  flex-direction: column;
   background-color: var(--background-1);
   padding: 2rem;
   border: 0.25rem outset black;
+  gap: 1rem;
 }

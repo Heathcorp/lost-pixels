@@ -33,3 +33,16 @@
   border: 0.5rem ridge;
   background-color: var(--background-1);
 }
+
+.counter {
+  font-family: 'Press Start 2P';
+  letter-spacing: 0.125rem;
+  padding: 0.25rem;
+  border: 0.25rem inset var(--background-1);
+  background-color: var(--background-2);
+  color: var(--glow-0);
+
+  justify-content: flex-end;
+
+  text-shadow: 0rem 0rem 0.125rem var(--glow-0);
+}
