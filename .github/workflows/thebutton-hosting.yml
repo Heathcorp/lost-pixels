@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - experiments/thebutton/**
-      - .github/workflows/thebutton-hosting.yml
+      # - .github/workflows/thebutton-hosting.yml
 
 jobs:
   build_and_deploy_tb:

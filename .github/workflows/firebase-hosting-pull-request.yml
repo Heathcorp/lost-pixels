@@ -9,7 +9,7 @@ on:
       - main
     paths:
       - website/**
-      - .github/workflows/firebase-hosting-pull-request.yml
+      # - .github/workflows/firebase-hosting-pull-request.yml
 
 jobs:
   build_and_deploy_lp:
