@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "lost-pixels-prod"
+    "default": "lost-pixels-prod",
+    "mainsite": "lost-pixels-prod",
+    "thebutton": "lost-pixels-the-button"
   }
 }
