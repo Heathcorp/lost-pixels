@@ -8,21 +8,20 @@ on:
       - experiments/thebutton
 
 jobs:
-  build_and_preview:
+  build_and_deploy_tb:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "hello"
-      # - uses: actions/checkout@v3
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: 18
-      #     cache: "npm"
-      #     cache-dependency-path: website/package-lock.json
-      # - run: cd experiments/thebutton && npm install
-      # - run: cd experiments/thebutton && npm run build
-      # - uses: FirebaseExtended/action-hosting-deploy@v0
-      #   with:
-      #     repoToken: "${{ secrets.GITHUB_TOKEN }}"
-      #     firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOST_PIXELS_PROD }}"
-      #     projectId: lost-pixels-prod
-      #     channelId: live
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: website/package-lock.json
+      - run: cd experiments/thebutton && npm install
+      - run: cd experiments/thebutton && npm run build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOST_PIXELS_PROD }}"
+          projectId: lost-pixels-the-button
+          channelId: live
