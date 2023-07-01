@@ -1,7 +1,18 @@
 {
   "projects": {
-    "default": "lost-pixels-prod",
-    "mainsite": "lost-pixels-prod",
-    "thebutton": "lost-pixels-the-button"
-  }
+    "default": "lost-pixels-prod"
+  },
+  "targets": {
+    "lost-pixels-prod": {
+      "hosting": {
+        "thebutton": [
+          "lost-pixels-the-button"
+        ],
+        "mainsite": [
+          "lost-pixels-prod"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
