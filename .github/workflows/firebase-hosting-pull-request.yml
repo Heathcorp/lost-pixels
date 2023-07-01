@@ -8,7 +8,7 @@ on:
     branches:
       - main
     paths:
-      - website
+      - website/**
 
 jobs:
   build_and_deploy_lp:
