@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - website/**
+      - .github/workflows/firebase-hosting-pull-request.yml
 
 jobs:
   build_and_deploy_lp:
@@ -27,4 +28,5 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOST_PIXELS_PROD }}"
           projectId: lost-pixels-prod
+          target: lost-pixels-prod
           channelId: live
