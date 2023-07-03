@@ -17,7 +17,7 @@
   src: local('Arvo-Italic'),
     url(@/assets/fonts/Arvo/Arvo-Italic.ttf) format('truetype');
   font-weight: 100 400;
-  font-style: oblique 20deg 50deg;
+  font-style: italic;
 }
 
 @font-face {
@@ -25,5 +25,5 @@
   src: local('Arvo-BoldItalic'),
     url(@/assets/fonts/Arvo/Arvo-BoldItalic.ttf) format('truetype');
   font-weight: 500 900;
-  font-style: oblique 20deg 50deg;
+  font-style: italic;
 }
