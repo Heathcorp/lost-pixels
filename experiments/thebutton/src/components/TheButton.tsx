@@ -1,11 +1,12 @@
 import { Component, JSX } from 'solid-js';
 
 import './components.css';
+import './common.css';
 
 const TheButton: Component<{ onClick?: () => void }> = (props) => {
   return (
-    <div class="theButton" onClick={props.onClick}>
-      press
+    <div class="theButton noselect" onClick={props.onClick}>
+      PRESS HERE
     </div>
   );
 };

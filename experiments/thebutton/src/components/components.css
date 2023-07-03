@@ -3,12 +3,19 @@
   font-size: 2rem;
 
   color: var(--text-0);
-  padding: 0.5rem;
+  padding: 0.75rem;
   text-align: center;
 
   border: 0.25rem solid var(--border-0);
 
-  /* text-shadow: 0.125rem 0.125rem var(--glow-0); */
+  /* ///// */
+  /* border: 0.25rem inset var(--background-1);
+  background-color: var(--background-2);
+  color: var(--glow-0);
+
+  justify-content: flex-end;
+
+  text-shadow: 0rem 0rem 0.25rem var(--glow-0); */
 }
 
 .theButton {
@@ -22,6 +29,7 @@
   border: 0.5rem outset;
   /* box-sizing: border-box; */
   /* box-shadow: 0.125rem 0.125rem var(--glow-0), -0.125rem -0.125rem var(--glow-1); */
+  font-size: 1rem;
 }
 
 .theButton:hover {
@@ -35,7 +43,6 @@
 }
 
 .counter {
-  font-family: 'Press Start 2P';
   letter-spacing: 0.125rem;
   padding: 0.25rem;
   border: 0.25rem inset var(--background-1);
