@@ -49,7 +49,6 @@ const ExperimentPage: Component = () => {
           </Box>
         </div>
       </div>
-      <div>;aoerhfpsd</div>
     </div>
   );
 };

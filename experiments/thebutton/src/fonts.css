@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Press Start 2P';
-  src: local('PressStart2P-Regular')
-    url('@/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf')
-    format('truetype');
+  src: local('PressStart2P-Regular'),
+    url(@/assets/fonts/Press_Start_2P/PressStart2P-Regular.ttf)
+      format('truetype');
 }
