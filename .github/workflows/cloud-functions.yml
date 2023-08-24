@@ -1,0 +1,27 @@
+name: Deploy cloud functions
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - functions/**
+      - .github/workflows/cloud-functions.yml
+
+jobs:
+  build_and_deploy_functions:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: "npm"
+          cache-dependency-path: website/package-lock.json
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOST_PIXELS_PROD }}
