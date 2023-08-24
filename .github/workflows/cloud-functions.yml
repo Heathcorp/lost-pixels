@@ -19,8 +19,8 @@ jobs:
           node-version: 18
           cache: "npm"
           cache-dependency-path: website/package-lock.json
-      - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
+      - run: cd functions && npm install
+      - uses: w9jds/firebase-action@master
         with:
           args: deploy --only functions
         env:
