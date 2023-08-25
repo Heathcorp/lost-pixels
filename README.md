@@ -4,7 +4,7 @@
 
 Lost pixels is a collection of web-based experiments. Think of it as a digital, online gallery.
 
-The only requirements for an experiment to make it onto lost pixels is that it is collaborative and public.
+~~The only requirements for an experiment to make it onto lost pixels is that it is collaborative and public.~~
 
 ## Requirements (TODO)
 
@@ -39,6 +39,7 @@ The only requirements for an experiment to make it onto lost pixels is that it i
 2. A Forum: either a forum for the site with simple anon auth, or something else. A site like this kind of needs a forum (if it gets popular)
 3.
 4. The Canvas but with turing machines
+5. Redo orbits and host
 
 ### Third-party experiments?
 
