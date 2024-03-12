@@ -5,6 +5,7 @@ import {
   createEffect,
   createResource,
   onCleanup,
+  on,
 } from 'solid-js';
 
 import LogoType from '../components/LogoType';
@@ -16,8 +17,8 @@ import Counter from '../components/Counter';
 import { FirebaseAppContext } from '../contexts/FirebaseAppProvider';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
-const SPOOLING_TIMEOUT = 2000;
-const INACTIVE_TIMEOUT = 60000;
+const SPOOLING_TIMEOUT = 1000;
+const INACTIVE_TIMEOUT = 30000;
 const REFETCH_INTERVAL = 2000;
 
 const MainPage: Component = (props) => {
@@ -35,22 +36,41 @@ const MainPage: Component = (props) => {
 
   // get the button count/store the button count
   const [loadingStatus, setLoadingStatus] = createSignal<
-    'LOADED' | 'LOADING' | 'REFETCHING'
+    'LOADED' | 'LOADING' | 'REFETCHING' | 'ERROR' | 'UPLOADING'
   >('LOADING');
   const [count, { mutate: setCount, refetch }] = createResource<number>(
-    async (source, { value, refetching }) => {
+    (source, { value, refetching }) => {
       if (refetching) {
+        console.log('REFETCHING');
         setLoadingStatus('REFETCHING');
       } else {
+        console.log('FIRST LOAD');
         setLoadingStatus('LOADING');
       }
-      const resp = await getButtonCountFunction({});
-      console.log(resp.data);
-      if (!resp.data.success) {
-        throw new Error('get button count failed');
-      }
-      setLoadingStatus('LOADED');
-      return resp.data.count ?? value ?? 0;
+      let fail: ErrorOptions | undefined | string = undefined;
+      return new Promise((resolve, reject) => {
+        getButtonCountFunction({})
+          .then((resp) => {
+            console.log(resp.data);
+            if (!resp.data.success) {
+              fail = resp.data.reason;
+            }
+            setLoadingStatus('LOADED');
+            resolve(resp.data.count ?? value ?? 0);
+          })
+          .catch((err) => {
+            fail = err;
+          })
+          .finally(() => {
+            if (fail) {
+              setLoadingStatus('ERROR');
+              console.error(fail);
+              reject(
+                new Error('get button count failed:' + JSON.stringify(fail))
+              );
+            }
+          });
+      });
     },
     { initialValue: 0 }
   );
@@ -66,17 +86,29 @@ const MainPage: Component = (props) => {
       setCount((prevCount) => prevCount - cachedSpooledPresses);
       setSpooledPresses((prevSpooled) => prevSpooled + cachedSpooledPresses);
     };
+    let fail: string | undefined;
+    setLoadingStatus('UPLOADING');
     pressButtonFunction({ count: cachedSpooledPresses })
       .then((value) => {
         console.log(value);
         if (!value.data.success) {
           revert();
+          fail = value.data.reason;
         }
       })
       .catch((reason) => {
         console.error(reason);
         console.log('fail', reason);
         revert();
+        fail = reason;
+      })
+      .finally(() => {
+        if (fail) {
+          setLoadingStatus('ERROR');
+        } else {
+          setLoadingStatus('LOADED');
+          refetchIntervalId = setInterval(refetch, REFETCH_INTERVAL);
+        }
       });
   };
 
@@ -93,23 +125,28 @@ const MainPage: Component = (props) => {
     () => setActive(false),
     INACTIVE_TIMEOUT
   );
-  createEffect(() => {
-    console.log('spooled:', spooledPresses());
+  createEffect(
+    on([spooledPresses], () => {
+      if (!spooledPresses()) return;
 
-    if (!spooledPresses()) return;
+      // delay/make the spooling timeout
+      if (spoolingTimeoutId !== null) clearTimeout(spoolingTimeoutId);
+      spoolingTimeoutId = setTimeout(sendSpooledPresses, SPOOLING_TIMEOUT);
+      if (refetchIntervalId) {
+        // refetch gets restarted after spooled presses get sent
+        clearTimeout(refetchIntervalId);
+        refetchIntervalId = null;
+      }
 
-    // delay/make the spooling timeout
-    if (spoolingTimeoutId !== null) clearTimeout(spoolingTimeoutId);
-    spoolingTimeoutId = setTimeout(sendSpooledPresses, SPOOLING_TIMEOUT);
-
-    // same-ish deal with inactivity
-    if (inactiveTimeoutId !== null) {
-      clearTimeout(inactiveTimeoutId);
-    } else {
-      setActive(true);
-    }
-    inactiveTimeoutId = setTimeout(() => setActive(false), INACTIVE_TIMEOUT);
-  });
+      // same-ish deal with inactivity
+      if (inactiveTimeoutId !== null) {
+        clearTimeout(inactiveTimeoutId);
+      } else {
+        setActive(true);
+      }
+      inactiveTimeoutId = setTimeout(() => setActive(false), INACTIVE_TIMEOUT);
+    })
+  );
 
   let refetchIntervalId: NodeJS.Timeout | null = setInterval(
     refetch,
