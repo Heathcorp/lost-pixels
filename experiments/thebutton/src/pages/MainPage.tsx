@@ -16,9 +16,9 @@ import Counter from '../components/Counter';
 import { FirebaseAppContext } from '../contexts/FirebaseAppProvider';
 import { getFunctions, httpsCallable } from 'firebase/functions';
 
-const SPOOLING_TIMEOUT = 10000;
+const SPOOLING_TIMEOUT = 2000;
 const INACTIVE_TIMEOUT = 60000;
-const REFETCH_INTERVAL = 5000;
+const REFETCH_INTERVAL = 2000;
 
 const MainPage: Component = (props) => {
   // firebase initialisation
@@ -34,13 +34,22 @@ const MainPage: Component = (props) => {
   >(functions, 'buttonPressed');
 
   // get the button count/store the button count
+  const [loadingStatus, setLoadingStatus] = createSignal<
+    'LOADED' | 'LOADING' | 'REFETCHING'
+  >('LOADING');
   const [count, { mutate: setCount, refetch }] = createResource<number>(
     async (source, { value, refetching }) => {
+      if (refetching) {
+        setLoadingStatus('REFETCHING');
+      } else {
+        setLoadingStatus('LOADING');
+      }
       const resp = await getButtonCountFunction({});
       console.log(resp.data);
       if (!resp.data.success) {
         throw new Error('get button count failed');
       }
+      setLoadingStatus('LOADED');
       return resp.data.count ?? value ?? 0;
     },
     { initialValue: 0 }
@@ -102,7 +111,7 @@ const MainPage: Component = (props) => {
     inactiveTimeoutId = setTimeout(() => setActive(false), INACTIVE_TIMEOUT);
   });
 
-  let refetchIntervalId: NodeJS.Timer | null = setInterval(
+  let refetchIntervalId: NodeJS.Timeout | null = setInterval(
     refetch,
     REFETCH_INTERVAL
   );
@@ -126,7 +135,10 @@ const MainPage: Component = (props) => {
       <div class="contentContainer">
         <LogoType />
         {/* Stats */}
-        <Counter count={count() + spooledPresses()} />
+        <Counter
+          count={count() + spooledPresses()}
+          loadingStatus={loadingStatus()}
+        />
         <div style={{ 'flex-direction': 'column', padding: '1rem' }}>
           <TheButton
             onClick={() => setSpooledPresses((prevSpooled) => prevSpooled + 1)}
