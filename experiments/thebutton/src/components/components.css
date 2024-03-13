@@ -32,6 +32,7 @@
   font-size: 1rem;
 }
 
+/* Very very messy styling in this project, sorry to anybody reading it */
 .theButton:hover {
   cursor: pointer;
   opacity: 0.9;
@@ -40,6 +41,13 @@
 .theButton:active {
   border: 0.5rem ridge;
   background-color: var(--background-1);
+}
+
+.theButton-disabled:hover {
+  cursor: not-allowed;
+}
+.theButton-disabled:active {
+  border: 0.5rem outset;
 }
 
 .counter {

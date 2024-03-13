@@ -21,7 +21,7 @@ import { makePersisted } from '@solid-primitives/storage';
 
 const SPOOLING_TIMEOUT = 1000;
 const INACTIVE_TIMEOUT = 30000;
-const REFETCH_INTERVAL = 2000;
+const REFETCH_INTERVAL = 3000;
 
 const MainPage: Component = (props) => {
   // firebase initialisation
@@ -40,9 +40,7 @@ const MainPage: Component = (props) => {
   const [loadingStatus, setLoadingStatus] = createSignal<
     'LOADED' | 'LOADING' | 'REFETCHING' | 'ERROR' | 'UPLOADING'
   >('LOADING');
-  const [countFrozenGlobally, setCountFrozenGlobally] = makePersisted(
-    createSignal(false)
-  );
+  const [countFrozenGlobally, setCountFrozenGlobally] = createSignal(false);
   const [count, { mutate: setCount, refetch }] = createResource<number>(
     (source, { value, refetching }) => {
       if (refetching) {
@@ -113,6 +111,8 @@ const MainPage: Component = (props) => {
           if (fail === 'count frozen') {
             console.log('COUNT FROZEN RETURNED');
             setCountFrozenGlobally(true);
+            setSpooledPresses(0);
+            return;
           }
         } else {
           setLoadingStatus('LOADED');
@@ -169,6 +169,7 @@ const MainPage: Component = (props) => {
         refetchIntervalId ?? setInterval(refetch, REFETCH_INTERVAL);
     } else if (refetchIntervalId !== null) {
       clearInterval(refetchIntervalId);
+      refetchIntervalId = null;
     }
   });
 
@@ -190,7 +191,12 @@ const MainPage: Component = (props) => {
         />
         <div style={{ 'flex-direction': 'column', padding: '1rem' }}>
           <TheButton
-            onClick={() => setSpooledPresses((prevSpooled) => prevSpooled + 1)}
+            enabled={!countFrozenGlobally()}
+            onClick={
+              !countFrozenGlobally()
+                ? () => setSpooledPresses((prevSpooled) => prevSpooled + 1)
+                : undefined
+            }
           />
         </div>
       </div>
