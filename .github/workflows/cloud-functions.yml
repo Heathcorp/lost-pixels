@@ -23,6 +23,6 @@ jobs:
       - run: echo "CF_TURNSTILE_KEY=${{ secrets.THE_BUTTON_TURNSTILE_SECRET_KEY }}" > ./functions/.env
       - uses: w9jds/firebase-action@master
         with:
-          args: deploy --only functions
+          args: deploy --debug --only functions
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOST_PIXELS_PROD }}
