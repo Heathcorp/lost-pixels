@@ -1,13 +1,23 @@
+// TODO: REFACTOR AND SPLIT INTO SEPERATE REPOS
+// properly setup linting, etc
+
 import { https } from "firebase-functions";
 import { initializeApp } from "firebase-admin/app";
 import { getDatabase, ServerValue } from "firebase-admin/database";
+import { defineString } from "firebase-functions/params";
+
+const CF_TURNSTILE_KEY = defineString("CF_TURNSTILE_KEY")
 
 initializeApp();
 
 export const helloWorld = https.onRequest((request, response) => {
   // logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!");
+  const key = CF_TURNSTILE_KEY.toString();
+  response.send("Hello from Firebase!" + " " + key.charAt(0) + key.charAt(1));
 });
+
+// extreme cases where we need to shut off the button but still show a count
+const COUNT_FROZEN: boolean = true;
 
 export const buttonCount = https.onCall(async (data, context) => {
   const db = getDatabase();
@@ -38,6 +48,10 @@ export const buttonCount = https.onCall(async (data, context) => {
 
 export const buttonPressed = https.onCall(
   async (data: { count?: number }, context) => {
+    if (COUNT_FROZEN) {
+      return {success: false, reason: "count frozen"};
+    }
+  
     const db = getDatabase();
 
     if (

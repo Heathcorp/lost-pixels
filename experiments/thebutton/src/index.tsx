@@ -12,4 +12,5 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
+// TODO: refactor this ridiculous
 render(() => <App />, root!);

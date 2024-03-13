@@ -7,6 +7,7 @@ import './index.css';
 import FirebaseAppProvider from './contexts/FirebaseAppProvider';
 import MainPage from './pages/MainPage';
 
+// TODO: REFACTOR THIS
 const App: Component = () => {
   return (
     <FirebaseAppProvider>

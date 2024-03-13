@@ -20,6 +20,8 @@
     "vite-plugin-solid": "^2.5.0"
   },
   "dependencies": {
+    "@nerimity/solid-turnstile": "^1.1.0",
+    "@solid-primitives/storage": "^2.1.4",
     "@solidjs/router": "^0.8.2",
     "@types/node": "^20.3.1",
     "firebase": "^10.2.0",

@@ -5,6 +5,7 @@ import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 
 export const FirebaseAppContext = createContext<FirebaseApp>();
 
+// TODO: parameterize this
 const firebaseConfig = {
   apiKey: 'AIzaSyBY4ZT_aaND_o9raipGJ7n9ujiPYvWm3UU',
   authDomain: 'lost-pixels-prod.firebaseapp.com',

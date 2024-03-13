@@ -5,10 +5,16 @@ import './components.css';
 const Counter: Component<{
   count: number;
   loadingStatus: 'LOADED' | 'LOADING' | 'REFETCHING' | 'ERROR' | 'UPLOADING';
+  frozen: boolean;
 }> = (props) => {
   return (
-    <div class="counter">
+    <div class="counter" classList={{ 'counter-frozen': props.frozen }}>
       <Switch>
+        <Match when={props.frozen}>
+          {'['}
+          {props.count}
+          {']'}
+        </Match>
         <Match when={props.loadingStatus === 'LOADED'}>{props.count}</Match>
         <Match
           when={

@@ -16,6 +16,8 @@ import Counter from '../components/Counter';
 
 import { FirebaseAppContext } from '../contexts/FirebaseAppProvider';
 import { getFunctions, httpsCallable } from 'firebase/functions';
+import { Turnstile } from '@nerimity/solid-turnstile';
+import { makePersisted } from '@solid-primitives/storage';
 
 const SPOOLING_TIMEOUT = 1000;
 const INACTIVE_TIMEOUT = 30000;
@@ -38,6 +40,9 @@ const MainPage: Component = (props) => {
   const [loadingStatus, setLoadingStatus] = createSignal<
     'LOADED' | 'LOADING' | 'REFETCHING' | 'ERROR' | 'UPLOADING'
   >('LOADING');
+  const [countFrozenGlobally, setCountFrozenGlobally] = makePersisted(
+    createSignal(false)
+  );
   const [count, { mutate: setCount, refetch }] = createResource<number>(
     (source, { value, refetching }) => {
       if (refetching) {
@@ -72,7 +77,7 @@ const MainPage: Component = (props) => {
           });
       });
     },
-    { initialValue: 0 }
+    { initialValue: 0, storage: () => makePersisted(createSignal()) }
   );
 
   const [spooledPresses, setSpooledPresses] = createSignal(0);
@@ -105,6 +110,10 @@ const MainPage: Component = (props) => {
       .finally(() => {
         if (fail) {
           setLoadingStatus('ERROR');
+          if (fail === 'count frozen') {
+            console.log('COUNT FROZEN RETURNED');
+            setCountFrozenGlobally(true);
+          }
         } else {
           setLoadingStatus('LOADED');
           refetchIntervalId = setInterval(refetch, REFETCH_INTERVAL);
@@ -167,6 +176,8 @@ const MainPage: Component = (props) => {
     console.log('main count:', count());
   });
 
+  const [turnstileToken, setTurnstileToken] = createSignal<string>();
+
   return (
     <div class="pageContainer">
       <div class="contentContainer">
@@ -175,6 +186,7 @@ const MainPage: Component = (props) => {
         <Counter
           count={count() + spooledPresses()}
           loadingStatus={loadingStatus()}
+          frozen={countFrozenGlobally()}
         />
         <div style={{ 'flex-direction': 'column', padding: '1rem' }}>
           <TheButton
@@ -182,6 +194,11 @@ const MainPage: Component = (props) => {
           />
         </div>
       </div>
+      {/* TODO: PARAMETERIZE PROPERLY AND REFACTOR */}
+      <Turnstile
+        sitekey="0x4AAAAAAAUs_sZVsYShS916"
+        onVerify={setTurnstileToken}
+      />
     </div>
   );
 };

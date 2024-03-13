@@ -53,3 +53,8 @@
 
   text-shadow: 0rem 0rem 0.125rem var(--glow-0);
 }
+
+.counter-frozen {
+  color: var(--glow-2);
+  text-shadow: 0rem 0rem 0.125rem var(--glow-2);
+}

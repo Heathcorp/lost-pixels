@@ -25,3 +25,4 @@ jobs:
           args: deploy --only functions
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOST_PIXELS_PROD }}
+          CF_TURNSTILE_KEY: ${{ secrets.THE_BUTTON_TURNSTILE_SECRET_KEY }}
