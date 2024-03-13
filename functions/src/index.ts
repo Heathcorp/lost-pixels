@@ -56,7 +56,7 @@ export const buttonPressed = https.onCall(
 
     if (
       data.count !== undefined &&
-      (typeof data.count !== "number" || data.count <= 0)
+      (typeof data.count !== "number" || data.count <= 0 || data.count > 500)
     ) {
       return {
         success: false,
