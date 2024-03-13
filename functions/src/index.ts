@@ -17,7 +17,7 @@ export const helloWorld = https.onRequest((request, response) => {
 });
 
 // extreme cases where we need to shut off the button but still show a count
-const COUNT_FROZEN: boolean = true;
+const COUNT_FROZEN: boolean = false;
 
 export const buttonCount = https.onCall(async (data, context) => {
   const db = getDatabase();
