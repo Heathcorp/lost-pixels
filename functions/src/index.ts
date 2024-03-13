@@ -6,14 +6,13 @@ import { initializeApp } from "firebase-admin/app";
 import { getDatabase, ServerValue } from "firebase-admin/database";
 import { defineString } from "firebase-functions/params";
 
-const CF_TURNSTILE_KEY = defineString("CF_TURNSTILE_KEY")
+const CF_TURNSTILE_KEY = defineString("CF_TURNSTILE_KEY");
 
 initializeApp();
 
 export const helloWorld = https.onRequest((request, response) => {
   // logger.info("Hello logs!", { structuredData: true });
-  const key = CF_TURNSTILE_KEY.toString();
-  response.send("Hello from Firebase!" + " " + key.charAt(0) + key.charAt(1));
+  response.send("Hello from Firebase!" + " " + CF_TURNSTILE_KEY);
 });
 
 // extreme cases where we need to shut off the button but still show a count
