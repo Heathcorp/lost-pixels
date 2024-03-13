@@ -20,9 +20,9 @@ jobs:
           cache: "npm"
           cache-dependency-path: website/package-lock.json
       - run: cd functions && npm install
+      - run: echo "${{ secrets.THE_BUTTON_TURNSTILE_SECRET_KEY }}" > ./functions/.env
       - uses: w9jds/firebase-action@master
         with:
           args: deploy --only functions
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_LOST_PIXELS_PROD }}
-          CF_TURNSTILE_KEY: ${{ secrets.THE_BUTTON_TURNSTILE_SECRET_KEY }}
