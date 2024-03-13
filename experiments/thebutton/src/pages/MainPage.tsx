@@ -32,7 +32,7 @@ const MainPage: Component = (props) => {
     { success: boolean; count?: number; reason?: string }
   >(functions, 'buttonCount');
   const pressButtonFunction = httpsCallable<
-    { count?: number },
+    { count?: number; turnstileToken: string },
     { success: boolean; reason?: string }
   >(functions, 'buttonPressed');
 
@@ -91,7 +91,10 @@ const MainPage: Component = (props) => {
     };
     let fail: string | undefined;
     setLoadingStatus('UPLOADING');
-    pressButtonFunction({ count: cachedSpooledPresses })
+    pressButtonFunction({
+      count: cachedSpooledPresses,
+      turnstileToken: turnstileToken() ?? '',
+    })
       .then((value) => {
         console.log(value);
         if (!value.data.success) {

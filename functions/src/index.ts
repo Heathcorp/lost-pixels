@@ -7,12 +7,13 @@ import { getDatabase, ServerValue } from "firebase-admin/database";
 import { defineString } from "firebase-functions/params";
 
 const CF_TURNSTILE_KEY = defineString("CF_TURNSTILE_KEY");
+// CF_TURNSTILE_KEY.value()
 
 initializeApp();
 
 export const helloWorld = https.onRequest((request, response) => {
   // logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!" + " " + CF_TURNSTILE_KEY.value());
+  response.send("Hello from Firebase!");
 });
 
 // extreme cases where we need to shut off the button but still show a count
@@ -46,7 +47,7 @@ export const buttonCount = https.onCall(async (data, context) => {
 });
 
 export const buttonPressed = https.onCall(
-  async (data: { count?: number }, context) => {
+  async (data: { count?: number; turnstileToken: string }, context) => {
     if (COUNT_FROZEN) {
       return {success: false, reason: "count frozen"};
     }
@@ -63,6 +64,31 @@ export const buttonPressed = https.onCall(
       };
     }
 
+    // Captcha time!
+    try {
+      if (!data.turnstileToken) {
+        return {
+          success: false,
+          reason: 'did not supply captcha response'
+        }
+      }
+
+      const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+      const formData = new FormData();
+      formData.set("secret", CF_TURNSTILE_KEY.value());
+      formData.set("response", data.turnstileToken);
+      const resp = await (fetch(url, {body: formData, method: 'POST'}));
+      const respBody = await resp.json();
+      if (!respBody.success) {
+        return { success: false, reason: 'captcha failed' };
+      }
+    } catch(err: any) {
+      console.error(err);
+      return {
+        success: false, reason: 'An error occurred when validating captcha.'
+      }
+    }
+
     try {
       const inc = data.count ?? 1;
 
@@ -76,7 +102,7 @@ export const buttonPressed = https.onCall(
 
       return {
         success: false,
-        reason: "An internal error occured.",
+        reason: "An internal error occurred.",
       };
     }
   }
