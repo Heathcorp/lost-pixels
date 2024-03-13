@@ -12,7 +12,7 @@ initializeApp();
 
 export const helloWorld = https.onRequest((request, response) => {
   // logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!" + " " + CF_TURNSTILE_KEY);
+  response.send("Hello from Firebase!" + " " + CF_TURNSTILE_KEY.value());
 });
 
 // extreme cases where we need to shut off the button but still show a count
