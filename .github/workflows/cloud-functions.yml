@@ -21,7 +21,7 @@ jobs:
           cache-dependency-path: website/package-lock.json
       - run: cd functions && npm install
       - run: echo "CF_TURNSTILE_KEY=${{ secrets.THE_BUTTON_TURNSTILE_SECRET_KEY }}" > ./functions/.env
-      - uses: w9jds/firebase-action@master
+      - uses: w9jds/firebase-action@v13.4.0
         with:
           args: deploy --only functions
         env:
