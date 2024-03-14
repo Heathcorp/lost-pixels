@@ -17,7 +17,7 @@ import Counter from '../components/Counter';
 
 import { FirebaseAppContext } from '../contexts/FirebaseAppProvider';
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { Turnstile } from '@nerimity/solid-turnstile';
+import { Turnstile, TurnstileRef } from '@nerimity/solid-turnstile';
 import { makePersisted } from '@solid-primitives/storage';
 
 const SPOOLING_TIMEOUT = 1000;
@@ -111,13 +111,18 @@ const MainPage: Component = (props) => {
       })
       .catch((reason) => {
         console.error(reason);
-        console.log('fail', reason);
         fail = reason;
       })
       .finally(() => {
+        // reset captcha
+        turnstileRef?.reset();
         if (fail) {
           setLoadingStatus('ERROR');
           revert();
+          if (fail === 'captcha failed') {
+            // captcha failure return
+            // do something
+          }
         } else {
           setLoadingStatus('LOADED');
           refetchIntervalId = setInterval(refetch, REFETCH_INTERVAL);
@@ -130,22 +135,26 @@ const MainPage: Component = (props) => {
       });
   };
 
-  // make sure the spooled presses get to the server if tab is closed
-  const onBeforeUnload = () => {
-    sendSpooledPresses();
-  };
-  window.addEventListener('beforeunload', onBeforeUnload);
-  // clean this up if this component unmounts
-  onCleanup(() => window.removeEventListener('beforeunload', onBeforeUnload));
+  // // make sure the spooled presses get to the server if tab is closed
+  // const onBeforeUnload = () => {
+  //   sendSpooledPresses();
+  // };
+  // window.addEventListener('beforeunload', onBeforeUnload);
+  // // clean this up if this component unmounts
+  // onCleanup(() => window.removeEventListener('beforeunload', onBeforeUnload));
 
   let spoolingTimeoutId: NodeJS.Timeout | null = null;
   let inactiveTimeoutId: NodeJS.Timeout | null = setTimeout(
     () => setActive(false),
     INACTIVE_TIMEOUT
   );
+
+  let turnstileRef: undefined | TurnstileRef;
+  const [turnstileToken, setTurnstileToken] = createSignal<string>();
+
   createEffect(
-    on([spooledPresses], () => {
-      if (!spooledPresses()) return;
+    on([spooledPresses, turnstileToken], () => {
+      if (!spooledPresses() || !turnstileToken()) return;
 
       // delay/make the spooling timeout
       if (spoolingTimeoutId !== null) clearTimeout(spoolingTimeoutId);
@@ -186,8 +195,6 @@ const MainPage: Component = (props) => {
     console.log('main count:', count());
   });
 
-  const [turnstileToken, setTurnstileToken] = createSignal<string>();
-
   return (
     <div class="pageContainer">
       <div class="contentContainer">
@@ -218,6 +225,7 @@ const MainPage: Component = (props) => {
       </div>
       {/* TODO: PARAMETERIZE PROPERLY AND REFACTOR */}
       <Turnstile
+        ref={turnstileRef}
         sitekey="0x4AAAAAAAUs_sZVsYShS916"
         onVerify={setTurnstileToken}
       />
