@@ -210,7 +210,9 @@ const MainPage: Component = (props) => {
         </div>
         <Show when={countFrozenGlobally()}>
           <div class="infoText">
-            The Button has been frozen for maintenance. Please check back later.
+            {
+              'The Button has been frozen for maintenance. Please check again later.'
+            }
           </div>
         </Show>
       </div>

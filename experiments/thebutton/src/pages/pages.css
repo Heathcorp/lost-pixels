@@ -22,4 +22,5 @@
 .infoText {
   padding: 0.5rem;
   border: 0.25rem dashed var(--border-0);
+  text-align: center;
 }
