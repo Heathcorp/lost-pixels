@@ -16,13 +16,22 @@ export const helloWorld = https.onRequest((request, response) => {
   response.send("Hello from Firebase!");
 });
 
+
 // extreme cases where we need to shut off the button but still show a count
-const COUNT_FROZEN: boolean = false;
+const getIsFrozen = async () => {
+  const db = getDatabase();
+  const ref = db.ref("thebutton/frozen");
+  const frozen = (await ref.once("value")).val();
+  return !!frozen;
+};
 
 export const buttonCount = https.onCall(async (data, context) => {
   const db = getDatabase();
 
+  
   try {
+    const frozen = await getIsFrozen();
+
     const ref = db.ref("thebutton/main_count");
     const count = (await ref.once("value")).val();
 
@@ -34,6 +43,7 @@ export const buttonCount = https.onCall(async (data, context) => {
 
     return {
       success: true,
+      frozen,
       count,
     };
   } catch (err: any) {
@@ -48,10 +58,12 @@ export const buttonCount = https.onCall(async (data, context) => {
 
 export const buttonPressed = https.onCall(
   async (data: { count?: number; turnstileToken: string }, context) => {
-    if (COUNT_FROZEN) {
-      return {success: false, reason: "count frozen"};
-    }
   
+    const frozen = await getIsFrozen();
+    if (frozen) {
+      return { success: false, frozen };
+    }
+
     const db = getDatabase();
 
     if (
@@ -65,7 +77,7 @@ export const buttonPressed = https.onCall(
     }
 
     // Captcha time!
-    try {
+    try {      
       if (!data.turnstileToken) {
         return {
           success: false,

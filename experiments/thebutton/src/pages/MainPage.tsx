@@ -6,6 +6,7 @@ import {
   createResource,
   onCleanup,
   on,
+  Show,
 } from 'solid-js';
 
 import LogoType from '../components/LogoType';
@@ -29,11 +30,11 @@ const MainPage: Component = (props) => {
   const functions = getFunctions(firebaseApp);
   const getButtonCountFunction = httpsCallable<
     unknown,
-    { success: boolean; count?: number; reason?: string }
+    { success: boolean; count?: number; reason?: string; frozen?: boolean }
   >(functions, 'buttonCount');
   const pressButtonFunction = httpsCallable<
     { count?: number; turnstileToken: string },
-    { success: boolean; reason?: string }
+    { success: boolean; reason?: string; frozen?: boolean }
   >(functions, 'buttonPressed');
 
   // get the button count/store the button count
@@ -60,6 +61,9 @@ const MainPage: Component = (props) => {
             }
             setLoadingStatus('LOADED');
             resolve(resp.data.count ?? value ?? 0);
+            if (resp.data.frozen) {
+              setCountFrozenGlobally(true);
+            }
           })
           .catch((err) => {
             fail = err;
@@ -90,6 +94,7 @@ const MainPage: Component = (props) => {
       setSpooledPresses((prevSpooled) => prevSpooled + cachedSpooledPresses);
     };
     let fail: string | undefined;
+    let frozenReturned = false;
     setLoadingStatus('UPLOADING');
     pressButtonFunction({
       count: cachedSpooledPresses,
@@ -98,28 +103,29 @@ const MainPage: Component = (props) => {
       .then((value) => {
         console.log(value);
         if (!value.data.success) {
-          revert();
           fail = value.data.reason;
+        }
+        if (value.data.frozen) {
+          frozenReturned = true;
         }
       })
       .catch((reason) => {
         console.error(reason);
         console.log('fail', reason);
-        revert();
         fail = reason;
       })
       .finally(() => {
         if (fail) {
           setLoadingStatus('ERROR');
-          if (fail === 'count frozen') {
-            console.log('COUNT FROZEN RETURNED');
-            setCountFrozenGlobally(true);
-            setSpooledPresses(0);
-            return;
-          }
+          revert();
         } else {
           setLoadingStatus('LOADED');
           refetchIntervalId = setInterval(refetch, REFETCH_INTERVAL);
+        }
+        if (frozenReturned) {
+          console.log('COUNT FROZEN RETURNED');
+          setCountFrozenGlobally(true);
+          setSpooledPresses(0);
         }
       });
   };
@@ -202,6 +208,11 @@ const MainPage: Component = (props) => {
             }
           />
         </div>
+        <Show when={countFrozenGlobally()}>
+          <div class="infoText">
+            The Button has been frozen for maintenance. Please check back later.
+          </div>
+        </Show>
       </div>
       {/* TODO: PARAMETERIZE PROPERLY AND REFACTOR */}
       <Turnstile

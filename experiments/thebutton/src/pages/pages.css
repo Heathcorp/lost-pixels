@@ -16,4 +16,10 @@
   padding: 2rem;
   border: 0.25rem outset black;
   gap: 1rem;
+  width: min-content;
+}
+
+.infoText {
+  padding: 0.5rem;
+  border: 0.25rem dashed var(--border-0);
 }

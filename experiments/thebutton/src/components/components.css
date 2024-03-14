@@ -8,6 +8,8 @@
 
   border: 0.25rem solid var(--border-0);
 
+  white-space: nowrap;
+
   /* ///// */
   /* border: 0.25rem inset var(--background-1);
   background-color: var(--background-2);
