@@ -14,40 +14,6 @@
           "destination": "/index.html"
         }
       ]
-    },
-    {
-      "target": "thebutton",
-      "public": "experiments/thebutton/dist",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
     }
-  ],
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log"
-      ],
-      "predeploy": [
-        "echo 'npm --prefix \"$RESOURCE_DIR\" run lint'",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
-    }
-  ],
-  "database": {
-    "rules": "database/database.rules.json"
-  }
+  ]
 }

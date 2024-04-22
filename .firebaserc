@@ -5,9 +5,6 @@
   "targets": {
     "lost-pixels-prod": {
       "hosting": {
-        "thebutton": [
-          "lost-pixels-the-button"
-        ],
         "mainsite": [
           "lost-pixels-prod"
         ]
