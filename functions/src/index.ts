@@ -18,11 +18,11 @@ export const helloWorld = https.onRequest((request, response) => {
 
 
 // extreme cases where we need to shut off the button but still show a count
-const getIsFrozen = async () => {
+const getButtonConfig = async () => {
   const db = getDatabase();
-  const ref = db.ref("thebutton/frozen");
-  const frozen = (await ref.once("value")).val();
-  return !!frozen;
+  const ref = db.ref("thebutton/config");
+  const config = (await ref.once("value")).val();
+  return config;
 };
 
 export const buttonCount = https.onCall(async (data, context) => {
@@ -30,7 +30,7 @@ export const buttonCount = https.onCall(async (data, context) => {
 
   
   try {
-    const frozen = await getIsFrozen();
+    const {frozen} = await getButtonConfig();
 
     const ref = db.ref("thebutton/main_count");
     const count = (await ref.once("value")).val();
@@ -56,10 +56,12 @@ export const buttonCount = https.onCall(async (data, context) => {
   }
 });
 
+const MAX_PRESSES_PER_REQUEST = 150;
+
 export const buttonPressed = https.onCall(
   async (data: { count?: number; turnstileToken: string }, context) => {
   
-    const frozen = await getIsFrozen();
+    const {frozen, } = await getButtonConfig();
     if (frozen) {
       return { success: false, frozen };
     }
@@ -68,7 +70,7 @@ export const buttonPressed = https.onCall(
 
     if (
       data.count !== undefined &&
-      (typeof data.count !== "number" || data.count <= 0 || data.count > 500)
+      (typeof data.count !== "number" || data.count <= 0 || data.count > MAX_PRESSES_PER_REQUEST)
     ) {
       return {
         success: false,
