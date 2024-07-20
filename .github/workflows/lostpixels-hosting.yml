@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - website/**
-      - .github/workflows/lostpixels-hosting.yml
 
 jobs:
   build_and_deploy_lp:
