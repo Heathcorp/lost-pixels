@@ -1,10 +1,10 @@
-import { Component, JSX, createSignal } from 'solid-js';
-import { useNavigate } from '@solidjs/router';
+import { Component, JSX, createSignal } from "solid-js";
+import { useNavigate } from "@solidjs/router";
 
-import Text from '../components/Text';
-import Box from '../components/Box';
+import Text from "../components/Text";
+import Box from "../components/Box";
 
-import '../pages/pages.css';
+import "../pages/pages.css";
 
 const ExperimentCard: Component<{
   id: string;
@@ -18,12 +18,12 @@ const ExperimentCard: Component<{
   return (
     <Box
       class="button-0 experimentCard"
-      onClick={() => navigate(`experiment/${'thebutton'}`)}
+      onClick={() => navigate(`experiment/${props.id}`)}
     >
       {/* Title */}
       <Text value={props.name} class="heading-1" />
       {/* Thumbnail */}
-      <Box class="box-1 no-shadow square" style={{ padding: '0px' }}>
+      <Box class="box-1 no-shadow square" style={{ padding: "0px" }}>
         <img src={props.image_path} class="image-default" />
       </Box>
       {/* Buttons? */}

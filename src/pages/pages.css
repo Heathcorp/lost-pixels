@@ -23,6 +23,7 @@
   max-width: 75%;
 
   align-self: center;
+  gap: 0.25rem;
 
   display: flex;
   flex-direction: row;
@@ -66,4 +67,11 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+}
+
+.experiment-link-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* align-items: center; */
 }

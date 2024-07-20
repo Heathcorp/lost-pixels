@@ -1,14 +1,14 @@
-import { Component, For, JSX } from 'solid-js';
+import { Component, For, JSX } from "solid-js";
 
-import Text from '../components/Text';
-import LogoType from '../components/LogoType';
-import Box from '../components/Box';
+import Text from "../components/Text";
+import LogoType from "../components/LogoType";
+import Box from "../components/Box";
 
-import './pages.css';
-import FlexDivider from '../components/FlexDivider';
-import ExperimentCard from '../components/ExperimentCard';
-import { EXPERIMENTS_LIST } from '../constants';
-import { useNavigate } from '@solidjs/router';
+import "./pages.css";
+import FlexDivider from "../components/FlexDivider";
+import ExperimentCard from "../components/ExperimentCard";
+import { EXPERIMENTS_LIST } from "../constants";
+import { useNavigate } from "@solidjs/router";
 
 const HomePage: Component = () => {
   const navigate = useNavigate();
@@ -22,17 +22,17 @@ const HomePage: Component = () => {
         <Box
           style={{
             flex: 1,
-            display: 'flex',
-            'flex-direction': 'row',
-            'justify-content': 'space-evenly',
-            'align-items': 'center',
-            gap: '0.25rem',
+            display: "flex",
+            "flex-direction": "row",
+            "justify-content": "space-evenly",
+            "align-items": "center",
+            gap: "0.25rem",
           }}
         >
           <Text
             class="clickable heading-1"
             value="About"
-            onClick={() => navigate('/about')}
+            onClick={() => navigate("/about")}
           />
           <FlexDivider />
           <Text class="clickable disabled heading-1" value="Random" />
@@ -50,7 +50,7 @@ const HomePage: Component = () => {
           <Text
             class="heading-3"
             value="Coming Soon..."
-            style={{ position: 'relative', left: '0.5rem' }}
+            style={{ position: "relative", left: "0.5rem" }}
           />
           <a class="note clickable" href="mailto:info@lostpixels.org">
             Want to help out?
