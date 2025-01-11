@@ -1,6 +1,6 @@
-import { Component, JSX, mergeProps } from 'solid-js';
+import { Component, JSX, mergeProps } from "solid-js";
 
-import './flexDivider.css';
+import "./flexDivider.css";
 
 const FlexDivider: Component<{ type?: number; style?: JSX.CSSProperties }> = (
   props

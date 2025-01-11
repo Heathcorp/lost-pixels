@@ -1,21 +1,21 @@
-import { Component } from 'solid-js';
-import Box from '../components/Box';
-import LogoType from '../components/LogoType';
-import { useNavigate } from '@solidjs/router';
+import { Component } from "solid-js";
+import Box from "../components/Box";
+import LogoType from "../components/LogoType";
+import { useNavigate } from "@solidjs/router";
 
-import Text from '../components/Text';
+import Text from "../components/Text";
 
 const AboutPage: Component = (props) => {
   const navigate = useNavigate();
   return (
     <div class="pageContainer">
-      <div class="pageRowContainer" style={{ 'justify-content': 'center' }}>
+      <div class="pageRowContainer" style={{ "justify-content": "center" }}>
         <Box>
-          <LogoType class="clickable" onClick={() => navigate('/home')} />
+          <LogoType class="clickable" onClick={() => navigate("/home")} />
         </Box>
       </div>
       <div class="aboutPageContentContainer">
-        <Box class="box-1" style={{ padding: '5rem' }}>
+        <Box class="box-1" style={{ padding: "5rem" }}>
           <Text>
             {/* TODO: move to constants */}
             Lost Pixels (.org) is a website intended to bring the old web back

@@ -1,6 +1,6 @@
-import { Component, JSX, children } from 'solid-js';
+import { Component, JSX, children } from "solid-js";
 
-import styles from './vanishingScroll.module.css';
+import styles from "./vanishingScroll.module.css";
 
 const VanishingScroll: Component<{
   children?: JSX.Element;

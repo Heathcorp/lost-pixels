@@ -1,29 +1,29 @@
 @font-face {
-  font-family: 'Arvo';
-  src: local('Arvo-Regular'),
-    url(@/assets/fonts/Arvo/Arvo-Regular.ttf) format('truetype');
+  font-family: "Arvo";
+  src: local("Arvo-Regular"),
+    url(@/assets/fonts/Arvo/Arvo-Regular.ttf) format("truetype");
   font-weight: 100 400;
 }
 
 @font-face {
-  font-family: 'Arvo';
-  src: local('Arvo-Bold'),
-    url(@/assets/fonts/Arvo/Arvo-Bold.ttf) format('truetype');
+  font-family: "Arvo";
+  src: local("Arvo-Bold"),
+    url(@/assets/fonts/Arvo/Arvo-Bold.ttf) format("truetype");
   font-weight: 500 900;
 }
 
 @font-face {
-  font-family: 'Arvo';
-  src: local('Arvo-Italic'),
-    url(@/assets/fonts/Arvo/Arvo-Italic.ttf) format('truetype');
+  font-family: "Arvo";
+  src: local("Arvo-Italic"),
+    url(@/assets/fonts/Arvo/Arvo-Italic.ttf) format("truetype");
   font-weight: 100 400;
   font-style: italic;
 }
 
 @font-face {
-  font-family: 'Arvo';
-  src: local('Arvo-BoldItalic'),
-    url(@/assets/fonts/Arvo/Arvo-BoldItalic.ttf) format('truetype');
+  font-family: "Arvo";
+  src: local("Arvo-BoldItalic"),
+    url(@/assets/fonts/Arvo/Arvo-BoldItalic.ttf) format("truetype");
   font-weight: 500 900;
   font-style: italic;
 }

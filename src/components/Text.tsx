@@ -1,6 +1,6 @@
-import { Component, mergeProps, JSX } from 'solid-js';
+import { Component, mergeProps, JSX } from "solid-js";
 
-import './common.css';
+import "./common.css";
 
 const Text: Component<{
   value?: string;
@@ -11,7 +11,7 @@ const Text: Component<{
   disabled?: boolean;
   onClick?: () => void;
 }> = (props) => {
-  const defaults = { class: 'default_text' };
+  const defaults = { class: "default_text" };
   const merged = mergeProps(defaults, props);
 
   return (
