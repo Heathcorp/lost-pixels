@@ -84,6 +84,11 @@
   box-shadow: 0.5rem 0.5rem var(--shadow-2);
 }
 
+.shadow-0-z1 {
+  margin: 0rem 0.25rem 0.25rem 0rem;
+  box-shadow: 0.25rem 0.25rem var(--shadow-0);
+}
+
 .button-0:hover {
   top: 0.25rem;
   left: 0.25rem;
