@@ -21,7 +21,7 @@ export const EXPERIMENTS_LIST: ExperimentData[] = [
   {
     id: "mastermind",
     name: "Mastermind",
-    caption: "Compiler and programming tool for Brainfuck.",
+    caption: "Compiler and programming tool for Brainf***.",
     url: "https://mastermind.lostpixels.org",
     image_path: mastermindThumbnail,
   },
