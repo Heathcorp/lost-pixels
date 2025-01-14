@@ -25,11 +25,11 @@ export const EXPERIMENTS_LIST: ExperimentData[] = [
     url: "https://mastermind.lostpixels.org",
     image_path: mastermindThumbnail,
   },
-  {
-    id: "goaltree",
-    name: "Goal Tree",
-    caption: "Tool for managing multiple concurrent goals.",
-    url: "https://goaltree.lostpixels.org",
-    image_path: goaltreeThumbnail,
-  },
+  // {
+  //   id: "goaltree",
+  //   name: "Goal Tree",
+  //   caption: "Tool for managing multiple concurrent interests.",
+  //   url: "https://goaltree.lostpixels.org",
+  //   image_path: goaltreeThumbnail,
+  // },
 ];
