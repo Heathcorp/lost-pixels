@@ -58,7 +58,7 @@ const HomePage: Component = () => {
         </div>
       </div>
 
-      <div class="shadow-0-z1" style={{position: "fixed", bottom: "0.25rem", right: "0.25rem"}}>
+      <div class="shadow-0-z1" style={{position: "fixed", bottom: "0.25rem", right: "0.25rem", "z-index": 10}}>
       <iframe src='https://thebutton.lostpixels.org/embed' style='border-width:0px;width: 224px;height: 120px;'></iframe>
       </div>
     </div>
